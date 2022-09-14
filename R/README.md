@@ -39,7 +39,8 @@ stakeholders of the MVFW.
 
 The second section shows **[how we processed the data](#data)** while
 the third section contains a brief **[exploratory
-analysis](#exploration)**.
+analysis](#exploration)**. I also show [random samples of tweets by
+domain](#examplary-tweets).
 
 ------------------------------------------------------------------------
 
