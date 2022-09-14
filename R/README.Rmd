@@ -1,8 +1,7 @@
 ---
 title: "Freeriding the Metaverse"
 output: 
-  github_document:
-    toc: true
+  github_document
 ---
 
 <!--
@@ -15,6 +14,21 @@ knit: (function(input, ...) {
     )
   })
 -->
+
+Fast fashion is associated with waste, micro-plastics and a waste of resources. [Digital fashion](https://www.netflix.com/watch/81197117) promises to be superior to conventional (fast) fashion in all of these regards as it allows consumers, for instance, to 
+try on outfits virtually such that they can better assess the clothing even before its physical twins have been shipped. Another scenario is that it reduces the consumption of physical fashion since the virtual products suffice as a means to represent oneself in social media or the _metaverse_.
+
+Along these lines several different stakeholders (including major brands such as [Forever21](https://twitter.com/Forever21/status/1507729045823234056) and [Tommy Hilfiger](https://twitter.com/TommyHilfiger/status/1507025541945245708)) started to experiment at the intersection of non fungible tokens (NFTs) and fashion organizing the first ever _Metaverse Fashion Week_ (MVFW) online in March 2022. In addition, the 2022's New York Fashion Week is also accompanied by the [release of NFTs that match physical products](https://www.forbes.com/sites/yolarobert1/2022/09/10/alo-yoga-debuts-its-first-ready-to-wear-collection-with-a-limited-edition-nft-at-new-york-fashion-week/).
+
+Due to this recency, we scrape twitter data to better understand the key stakeholders of the MVFW.
+
+# Contents
+
+The second section shows **[how we processed the data](#data)** while the third section contains a brief **[exploratory analysis](#exploration)**. 
+
+---
+
+_(The following four code chunks set up the document.)_
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -59,14 +73,6 @@ cDanger <- "#EB6969"
 STARTDATE <- as.Date("2022-03-23")
 ENDDATE   <- as.Date("2022-03-27")
 ```
-
-Fast fashion is associated with waste, micro-plastics and a waste of resources. [Digital fashion](https://www.netflix.com/watch/81197117) promises to be superior to conventional (fast) fashion in all of these regards as it allows consumers, for instance, to 
-try on outfits virtually such that they can better assess the clothing even before its physical twins have been shipped. Another scenario is that it reduces the consumption of physical fashion since the virtual products suffice as a means to represent oneself in social media or the _metaverse_.
-
-Along these lines several different stakeholders (including major brands such as [Forever21](https://twitter.com/Forever21/status/1507729045823234056) and [Tommy Hilfiger](https://twitter.com/TommyHilfiger/status/1507025541945245708)) started to experiment at the intersection of non fungible tokens (NFTs) and fashion organizing the first ever _Metaverse Fashion Week_ (MVFW) online in March 2022. In addition, the 2022's New York Fashion Week is also accompanied by the [release of NFTs that match physical products](https://www.forbes.com/sites/yolarobert1/2022/09/10/alo-yoga-debuts-its-first-ready-to-wear-collection-with-a-limited-edition-nft-at-new-york-fashion-week/).
-
-Due to this recency, we scrape twitter data to better understand the key stakeholders of the MVFW
-
 
 # Data
 
@@ -159,6 +165,10 @@ en[, nMentions := str_count(string = customMentions, pattern = "@")]
 en[, timing := "after"]
 en[date <= ENDDATE, timing := "during"]
 en[date < STARTDATE, timing := "before"]
+
+en[, timing := factor(timing,
+                      ordered = TRUE,
+                      levels  = c("before", "during", "after"))]
 ```
 
 ```{r}
@@ -179,6 +189,7 @@ data <- en[date <= as.Date("2022-04-24"), # due to brands query
              video,
              geo,
              timing,
+             date,
              created_at,
              timezone,
              replies_count,
@@ -202,7 +213,7 @@ Note that:^[Note to myself: create table, if two dimensions are really required.
 
 I've done the classification in a semi-automated way by focusing on the `username`s.
 
-### Automated  heuristics
+### Automated heuristics
 
 First, I apply regular expressions to tag web3 content creators.
 
@@ -225,17 +236,40 @@ data[str_detect(string = username,
 This yields many usernames that fall into neither of these categories. This is where the manual part starts.
 
 ### Manual inspection
-I display a table of the most relevant users, measured by the number of likes they received for all their posts in our data. Subsequently, I search the top 75 in twitter, read their description (or biography) as well their posts in our data.
+
+The following figure shows a density plot that illustrates the number of likes a user received.^[I limit this figure to users that received at least one but less than 1000 likes.]
+
+```{r warning = FALSE}
+tmp <- data[is.na(domain), 
+     .(likes = sum(likes_count, na.rm = TRUE)),
+     by = username][order(-likes)]
+
+ggplot(data = tmp[likes > 0 & likes < 1000],
+       mapping = aes(x = likes)) +
+  # geom_histogram(fill = cPrimary, binwidth = 5) +
+  geom_density(fill = cPrimary, alpha = 0.66, col = cPrimary) +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  layout
+
+```
+
+```{r}
+known   <- tmp[1:100, sum(likes)]
+overall <- tmp[, sum(likes)]
+share   <- round(100*known/overall)
+```
+
+Next, I display a table of the 100 most relevant users, measured by the number of likes they received for all their posts in our data. These 100 users account for `r share`% of the likes we observe in our data that are not yet categorized by the automatic approach outlined [above](#automated-heuristics).
 
 ```{r showNA}
-data[is.na(domain), 
-     .(likes = sum(likes_count, na.rm = TRUE)),
-     by = username][order(-likes)] %>% 
-  head(75) %>%
+tmp %>% 
+  head(100) %>%
   kable()
 ```
 
-Having reviewed all of them, I'll classify them by hand.
+
+Subsequently, I search the top 100 users in twitter using a web browser, read their description (or biography) as well their posts in our data. Having reviewed all of them, I'll classify them by hand.
 
 ```{r tags}
 
@@ -253,7 +287,11 @@ data[username %in% c("Deadfellaz", "gossapegirl", "asian_mint", "canessadcl",   
                      "pedroguez__", "additionalrules", "media_diamante",
                      "altavagroup", "ww_ventures", "davidcash888", "move78studio",
                      "qdibs_eth", "realsophiarobot", "manadaiquiridcl",
-                     "madamape", "decentralgames",
+                     "madamape", "decentralgames", "projectmediahq", "dcljasonx",
+                     "mutani_io", "0xquiksilver", "reginaturbina", "jtv____",
+                     "dogmandcl", "soultrydubs", "lingxing_dcl", "knownorigin_io",
+                     "danitpeleg3d", "survive_p2e", "mgh_dao", "serenaelis_",
+                     "koryptostylist",
                      "deadfellaz" # not sure where to put these guys since they have some sort of cooperation
                      ), 
      `:=`(domain = "web3",
@@ -262,7 +300,7 @@ data[username %in% c("Deadfellaz", "gossapegirl", "asian_mint", "canessadcl",   
 # tag web3 x fashion
 data[username %in% c("thefabricant", "xrcouture", "auroboros_ltd", "wirelyss",    # NAME WEB3 FASHION HERE!
                      "polygondressing", "the_vogu", "shopcider", "houseofdaw",
-                     "neuno_io", "stylexchange_io", "parzival_kazuto"), 
+                     "neuno_io", "stylexchange_io", "parzival_kazuto", "bitski"), 
      `:=`(domain = "web3",
           type   = "fashion creators")]
 
@@ -294,6 +332,7 @@ data <- data[,
                domain,
                type,
                timing,
+               date,
                created_at,
                replies_count,
                retweets_count,
@@ -319,7 +358,7 @@ save(data, file = "../data/processed/mvfw.RData")
 ```
 
 
-# Display
+# Exploration
 
 Here is a list of the 25 users who received the most likes. Almost all of them are centered around the web3 domain.
 
@@ -416,3 +455,53 @@ data[, .(`Number of likes` = sum(likes_count)), by = c("domain", "type")] %>% ka
 data[, .(`Number of retweets` = sum(retweets_count)), by = c("domain", "type")] %>% kable()
 ```
 
+# Timing
+
+## Timing x domain
+
+How much was posted before, during and after the MVFW?
+
+```{r}
+tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "domain")][order(domain)]
+tmp[, sum := sum(N), by = domain]
+tmp[, share := paste0(round(100*N/sum), "%")]
+tmp %>% kable()
+```
+
+Even though we queried the data such that the duration of the time `before` is exactly as long as the duration of the time `after` (+/-`r STARTDATE - data[, min(date)]` days), we count less tweets in both domains (web3 as well as fashion) posted after the MVFW took place.
+
+```{r eval = FALSE}
+data[, min(date)] - STARTDATE
+data[, max(date)] - ENDDATE
+```
+
+The same holds true for the number of likes received...
+
+```{r}
+tmp <- data[!is.na(domain), .(N = sum(likes_count)), by = c("timing", "domain")][order(domain)]
+tmp[, sum := sum(N), by = domain]
+tmp[, share := paste0(round(100*N/sum), "%")]
+tmp %>% kable()
+```
+
+...as well as for the number of retweets.
+
+```{r}
+tmp <- data[!is.na(domain), .(N = sum(retweets_count)), by = c("timing", "domain")][order(domain)]
+tmp[, sum := sum(N), by = domain]
+tmp[, share := paste0(round(100*N/sum), "%")]
+tmp %>% kable()
+```
+
+However, both of these engagement metrics (`likes_count` and `retweets_count`) show different patterns across domains. The web3 domain triggered by far the most engagement before the event, while the fashion domain received the most attention during the event (on the basis of a comparable amount of tweets).
+
+## Timing x type
+
+How much was posted before, during and after the MVFW?
+
+```{r}
+tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "type")][order(type)]
+tmp[, sum := sum(N), by = type]
+tmp[, share := paste0(round(100*N/sum), "%")]
+tmp %>% kable()
+```
