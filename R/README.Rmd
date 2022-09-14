@@ -3,14 +3,18 @@ title: "Freeriding the Metaverse"
 output: 
   github_document:
     toc: true
+---
+
+<!--
+# To render the output to another directory, use the following lines in the YAML header
+# Thanks https://stackoverflow.com/a/71826276
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
       output_dir = "../"
     )
   })
----
-
+-->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
