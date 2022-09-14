@@ -1,6 +1,6 @@
 # Freeriding the Metaverse
 
-Using twitter data, we analyze the buzz sourrounding 2022's Metaverse Fashion Week (MVFW). We find that headlining fashion brands did not use the MVFW to reach the non attending audience. This stands in contrast to their social media efforts linked to physical fashion shows (Note to myself: need to systematically query data to show this). This leaves a vacuum other stakeholders are filling. More precisely, web3 evangelists free-ride the wave the MVFW triggers -- potentially reaching audiences they could not have reached otherwise. 
+Using twitter data, we analyze the buzz sourrounding 2022's Metaverse Fashion Week (MVFW). We find that headlining fashion brands did not use the MVFW to reach the non-attending-audience. This stands in contrast to their social media efforts linked to physical fashion shows (Note to myself: need to systematically query data to show this). This leaves a vacuum other stakeholders are filling. More precisely, web3 evangelists free-ride the wave the MVFW triggers -- potentially reaching audiences they would not have reached otherwise. 
 
 ## Data
 To learn more about the queries we ran, see the data we queried or to download the processed data, [click here](https://github.com/Howquez/mvfw/tree/main/data).
