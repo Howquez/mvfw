@@ -1,0 +1,711 @@
+---
+title: "Blockchain, marketing and the metaverse"
+format: html
+editor: visual
+execute:
+  echo: false
+---
+
+
+```{r settings}
+options(stringsAsFactors = FALSE)
+invisible(Sys.setlocale(category = "LC_ALL", locale = "C"))
+set.seed(42)
+```
+
+```{r packages}
+
+# install.packages("pacman")
+pacman::p_load(magrittr, data.table, stringr, lubridate, # overviewR,
+               ggplot2, MetBrewer, knitr,
+               qdapRegex, tm, sentimentr, lexicon, radarchart, tidytext, #qdap
+               pbapply, lda, LDAvis)
+```
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                plot.caption = element_text(colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+# colors <- met.brewer(name="Tam",n=7,type="discrete")
+cPrimary = "#00802F"
+cSecondary = "#EB6969"
+cInfo = "#FFF04B"
+cDanger <- "#EB6969"
+```
+
+```{r helpers}
+# error handling wrapper function for tolower()
+tryTolower <- function(x){
+  y = NA
+  try_error = tryCatch(tolower(x), error = function(e) e)
+  if (!inherits(try_error, 'error'))
+    y = tolower(x)
+  return(y)
+}
+
+# remove blanks
+blankRemoval<-function(x){
+  x <- unlist(strsplit(x,' '))
+  x <- subset(x,nchar(x)>0)
+  x <- paste(x,collapse=' ')
+}
+
+# always use the singular of nft
+singularNFT <- function(x){
+  str_replace_all(string = x,
+                  pattern = "nfts",
+                  replacement = "nft")
+}
+
+# wrapper 
+cleancorpus <- function(corpus, stopwords = customStopwords){
+  corpus <- tm_map(corpus, content_transformer(tryTolower))
+  corpus <- tm_map(corpus, removeWords, stopwords)
+  corpus <- tm_map(corpus, removePunctuation) # also removes "#" and "@"
+  corpus <- tm_map(corpus, stripWhitespace)
+  corpus <- tm_map(corpus, removeNumbers)
+  corpus <- tm_map(corpus, content_transformer(singularNFT))
+  # corpus <- tm_map(corpus, stemDocument) # debatable step
+  return(corpus)
+}
+```
+
+```{r periods}
+startDate <- as.Date("2022-03-23")
+endDate   <- as.Date("2022-03-27")
+```
+
+# Background
+
+Following the Milan Fashion Week, the first ever Metaverse Fashion Week (MVFW) was hosted on [Decentraland](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/) between `r startDate` and `r endDate`. It offered classic runways and panel discussion as well as flagship stores of well known brands (such as _Estée Lauder_, _Philipp Plein_ or _Forever 21_), pop-up stores and after show parties. 
+
+Importantly, visitors were able to buy NFTs that match physical products. Some NFTs were even shipped with vouchers that could be redeemed for the respective physical twin.
+
+# Data
+
+::: {.callout-tip icon="false"}
+## TWINT Querry
+
+The data described below may stem from the following query using [TWINT.](https://github.com/twintproject/twint) 
+:::
+
+
+```{python queryData}
+#| eval: false
+#| echo: true
+
+import twint
+
+# Configure
+config = twint.Config()
+config.Search = "mvfw"
+config.Lang = "en"
+config.Since = "2021-11-27 00:00:00"
+config.Until = "2022-04-26 00:00:00"
+# config.Limit = 100
+Store_csv = True
+config.Output = "tweetMetaverseFashionWeek.csv"
+
+# Run
+twint.run.Search(config)
+```
+
+```{r readData}
+tmp <- read.csv("../studentProject/tweetMetaverseFashionWeek.csv") %>% 
+  data.table()
+```
+
+## Refactor
+
+```{r transformData}
+# String clean up 
+tmp[, tweet := iconv(tweet, "latin1", "ASCII", sub = "")]
+tmp[, tweet := rm_url(tweet,                    # remove URLs
+                      pattern = pastex("@rm_twitter_url", "@rm_url"))]
+# requires qdap
+# tmp[, tweet := bracketX(tweet , bracket="all")] # rm strings in between parentheses, and other brackets
+# tmp[, tweet := replace_abbreviation(tweet)]     # replaces a.m. to AM etc
+
+# subset english sample of unique tweets
+en <- tmp[language == "en"] %>% unique(by = "tweet")
+
+# create distinc ID
+en[, doc_id := .I]
+
+# change date & time format
+en[, created_at := str_sub(string = created_at,
+                           start  = 1,
+                           end    = 19) %>% ymd_hms()]
+en[, date := dmy(date)]
+
+# store mentions (@....)
+en[, customMentions := str_extract_all(string = tweet,
+                                       pattern = "@\\S+")]
+en[customMentions == "character(0)", 
+   customMentions := NA]
+
+# define time frames
+en[, timing := "before"]
+en[date > startDate, timing := "during"]
+en[date > endDate, timing := "after"]
+
+en[, timing := factor(timing,
+                      ordered = TRUE,
+                      levels  = c("before", "during", "after"))]
+
+# re-arrange data for corpus
+data <- en[,
+           .(doc_id,
+             text = tweet,
+             hashtags,
+             cashtags,
+             username,
+             mentions,
+             name,
+             place,
+             urls,
+             photos,
+             video,
+             geo,
+             created_at,
+             timing,
+             timezone,
+             mentions,
+             replies_count,
+             retweets_count,
+             likes_count,
+             language,
+             id,
+             conversation_id,
+             retweet_id)]
+
+```
+
+The data contains `r format(tmp[, .N], big.mark = ".", decimal.mark = ",")` rows, each representing a tweet.  Its columns represent some IDs, meta information about URLs, retweets, etc. as well as the tweets itself (from which I removed URLs using `qdapRegex::rm_url()`). The data was scraped for a period ranging from `r en[, min(date)]` to `r en[, max(date)]`.
+
+I subset the data to focus on english tweets. In addition, I prune duplicated tweets. This leaves us with a [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html) that has `r format(en[, .N], big.mark = ".", decimal.mark = ",")` rows that correspond to unique English tweets.
+
+The metaverse fashionweek (MVFW) took place from March 24^th^ until March 27^th^. The following graph inspects the number of tweets posted in and around that time.
+
+```{r overview}
+tmp <- en[, .N, by = date]
+tmp[, mvfw := FALSE]
+tmp[date >= as.Date("2022-03-24") & date <= as.Date("2022-03-27"), mvfw := TRUE]
+
+n <- tmp[mvfw == TRUE, sum(N)]
+
+ggplot(data = tmp[date >= as.Date("2022-02-24") & date <= as.Date("2022-04-27")],
+       mapping = aes(x = date, y = N)) +
+  geom_line(color = "#00802F") +
+  geom_area(fill = "#00802F", alpha = 0.66) +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  geom_vline(xintercept = startDate, col = "#FFFFFF") +
+  geom_vline(xintercept = endDate, col = "#FFFFFF") +
+  layout +
+  theme(legend.position = "none") +
+  labs(title = "Absolute number of unique english tweets per day",
+       x = "Date",
+       y = "",
+       caption = paste0("The green shaded area represents MVFW period with a total of " ,n, " unique english tweets.",
+                        "White lines mark start- and end date of the MVFW."))
+```
+
+As the following table shows, there are few usernames who are associated to quite a lot of posts. Simultaneously, there are many usernames, who have only posted one tweet (that ended up being in our data).
+
+```{r numberOfTweets}
+tmp <- data[, .N, by = username]
+tmp %>% setorder(-N) %>% head(5) %>% kable(col.names = c("username", "number of tweets"))
+singleTweetUsers <- tmp[N == 1, .N]
+```
+
+More precisely, there are `r tmp[N == 1, .N]` (or `r format(tmp[N == 1, .N] / tmp[, .N] * 100, digits = 2)`%) users with only one tweet in our data.
+
+```{r withinSubjectsDesign}
+
+A <- data[timing == "before", .(username, text, created_at)]
+B <- data[timing == "after", .(username, text, created_at)]
+
+# set the ON clause as keys of the tables:
+setkey(A,username)
+setkey(B,username)
+
+# perform the inner join
+C <- A[B, nomatch=0]
+
+# get users who posted before and after
+withinUsers <- C[, unique(username)]
+
+within <- data[username %in% withinUsers]
+
+setorder(within, username, created_at)
+
+rm(list = c("A", "B", "C"))
+
+# within[, .N, by = username]$N %>% min() # check the min number of rows per username
+```
+
+Moreover, we count `r within[, unique(username)] %>% NROW()` users with qualified tweets before _and_ after the MVFW. We can exploit the corresponding tweets for a within-subject-design, to display how the sentiment of tweeters changed over time (pre- and post-MVFW).
+
+# Polarity Analyses
+
+Given the available data and according to [this analysis plan](https://universitaetstgallen-my.sharepoint.com/personal/hauke_roggenkamp_unisg_ch/_layouts/15/doc.aspx?sourcedoc=%7Bf4cddff1-b1e0-4d63-987f-abc35284a2fa%7D&action=edit), I'll analyze tweets over time in what follows.
+
+## Within-Subjects
+
+We want to analyze tweets of people who posted before and after the MVFW and see whether their polarity or sentiment changed during the event. To get the corresponding data, I create two subsets of data: one with tweets from before (`A`) and one with tweets from after (`B`) the MVFS.
+I then perform an inner join with these two tables which yields data (`C`) that only contains tweets of users who tweeted in both periods. I can then use these `withinUsers`s to create a `within` data.table by selecting only the `data` of these `username`s.
+
+```{r within1to1}
+# create da data.table that concatenates all pre-event tweets as well as post-event tweets by user. 
+# withinCondensed <- within[, 
+#                           .(text = toString(text)), 
+#                           by = c("username", "timing")][timing != "during"]
+
+pre <- within[timing == "before", 
+              .(polarity = sentiment_by(text.var = text,
+                                        by = username,
+                                        polarity_dt = lexicon::hash_sentiment_jockers_rinker,
+                                        valence_shifters_dt = lexicon::hash_valence_shifters,
+                                        amplifier.weight = 0.8,
+                                        n.before = 5,
+                                        n.after = 2))]
+
+post <- within[timing == "after", 
+               .(polarity = sentiment_by(text.var = text,
+                                         by = username,
+                                         polarity_dt = lexicon::hash_sentiment_jockers_rinker,
+                                         valence_shifters_dt = lexicon::hash_valence_shifters,
+                                         amplifier.weight = 0.8,
+                                         n.before = 5,
+                                         n.after = 2))]
+
+tmp1 <- pre[, .(username = polarity.username,
+                preSent  = polarity.ave_sentiment,
+                preCount = polarity.word_count)]
+
+tmp2 <- post[, .(username = polarity.username,
+                 postSent  = polarity.ave_sentiment,
+                 postCount = polarity.word_count)]
+
+withinPolarity <- tmp1[tmp2, on = .(username = username)]
+
+withinPolarity[, diff := postSent - preSent]
+```
+
+```{r}
+
+preavg  <- withinPolarity[, mean(preSent)]
+postavg <- withinPolarity[, mean(postSent)]
+
+tmp <- melt(withinPolarity, 
+            id.vars = c("username"),
+            measure.vars = c("preSent", "postSent"),
+            variable.name = "timing",
+            value.name = "sentiment")
+
+ggplot(data = tmp,
+       mapping = aes(x = sentiment, fill = timing)) +
+  geom_density(alpha = 0.4, col = NA) +
+  scale_y_continuous(expand = c(0, NA)) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  geom_vline(xintercept = 0, size = 0.5) +
+  geom_vline(xintercept = preavg, lty = 2, alpha = 0.5) +
+  geom_vline(xintercept = postavg, lty = 2, alpha = 0.5) +
+  layout +
+  scale_fill_discrete(labels=c("pre MVFW", "post MVFW")) +
+  theme(axis.line.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "bottom") +
+  labs(title = "Distribution of Polarity (Sentiment)",
+       y = "Density", x = "Sentiment",
+       caption = "Dashed lines mark the respective means.")
+```
+
+```{r}
+sample.mean <- withinPolarity[, mean(diff)]
+
+sample.n <- withinPolarity[, .N]
+sample.sd <- withinPolarity[, sd(diff)]
+sample.se <- sample.sd/sqrt(sample.n)
+
+alpha = 0.05
+degrees.freedom = sample.n - 1
+t.score = qt(p=alpha/2, df=degrees.freedom,lower.tail=F)
+
+margin.error <- t.score * sample.se
+lower.bound <- sample.mean - margin.error
+upper.bound <- sample.mean + margin.error
+```
+
+
+```{r}
+# Calculate the mean and standard error
+l.model <- lm(formula = diff ~ 1, 
+              data = withinPolarity)
+
+# Calculate the confidence interval
+lb <- confint(l.model, level = 0.95)[1] %>% round(digits = 3)
+ub <- confint(l.model, level = 0.95)[2] %>% round(digits = 3)
+
+ggplot(data = withinPolarity,
+       mapping = aes(x = diff)) +
+  geom_density(alpha = 0.4, col = NA, fill = cPrimary) +
+  scale_y_continuous(expand = c(0, NA)) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  geom_vline(xintercept = 0, size = 0.5) +
+  geom_vline(xintercept = lb, lty = 2, alpha = 0.5, col = "#FFFFFF") +
+  geom_vline(xintercept = ub, lty = 2, alpha = 0.5, col = "#FFFFFF") +
+  layout +
+  theme(axis.line.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "bottom") +
+  labs(title = "Within Subject Polarity Differences",
+       y = "Density", x = "Post-Event minus Pre-Event Polarity.",
+       caption = paste0("Dashed white lines indicate 95% confidence intervall ranging from ", lb, " to ", ub, "."))
+```
+
+
+## Between Subjects
+
+If we limit ourselves to users who (as far as we know) tweeted before and after the MVFW, we have to prune a lot of data. More precisely, we ignore `r round((1-within[, .N] / en[, .N])*100, digits = 1)`% of the available tweets.^[Because we focus on `r tmp[, .N]` users that have tweeted at least before and after the event.]
+
+For this reason, it is worthwhile to also look into aggregate effects. As before, `sentiment_by` yields average polarities (`ave_sentiment`) across time periods.
+
+```{r polarityByGroupTable}
+sentiment_by(text.var = data[, get_sentences(text)],  # from sentimentr
+             by = data[, timing],
+             polarity_dt = lexicon::hash_sentiment_jockers_rinker,
+             valence_shifters_dt = lexicon::hash_valence_shifters,
+             amplifier.weight = 0.8,
+             n.before = 5,
+             n.after = 2) %>% 
+  kable()
+```
+
+Using the same function, one can plot distributions, simply by calculating the polarity for each tweet.
+
+```{r polarityByGroupViz}
+temp <- sentiment_by(text.var = data[, get_sentences(text)],
+                     by = data[, doc_id],
+                     polarity_dt = lexicon::hash_sentiment_jockers_rinker,
+                     valence_shifters_dt = lexicon::hash_valence_shifters,
+                     amplifier.weight = 0.8,
+                     n.before = 5,
+                     n.after = 2) 
+
+merge <- temp[data, on = .(doc_id=doc_id)]
+
+ggplot(data = merge,
+       mapping = aes(x = ave_sentiment,
+                     fill = timing)) +
+  geom_density(alpha = 0.4, col = NA) +
+  scale_y_continuous(expand = c(0, NA)) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  labs(title = "Polarity distribution by time frame",
+       caption = "Using lexicon::hash_sentiment_jockers_rinker.",
+       x = "Polarity", y = "Density") +
+  layout +
+  theme(axis.line.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "bottom")
+```
+
+Both, the table as well as the figure show considerable differences.  The distributions illustrate, however, that there are many tweets (across all time periods) with a neutral polarity. In addition, relatively few have a negative sentiment.
+
+
+# Sentiment Analysis: Emotional States
+
+In addition, we can run another sentiment analysis using [Plutchik Wheel](https://www.jstor.org/stable/27857503).
+
+## Between Subjects
+
+Luckily, the `lexicon` package contains a `nrc` lexicon that is tidy (which saves me some lines of code). I'll eventually merge it with a tidy document term matrix (DTM), that I'll create next.
+
+```{r lexicon}
+nrc_emotions <- lexicon::hash_nrc_emotions
+# lexicon::hash_internet_slang
+# nrc_emotions %>% head() %>% kable()
+```
+
+```{r stopwords}
+customStopwords <- c(stopwords("english"), "amp",
+                     "mvfw", "fashion", "week", "fashionweek",
+                     "metaverse", "decentraland")
+```
+
+The DTM is created using a loop that combines a long character for all of a news outlet's articles. The combined vector is then being turned into a corpus, cleaned and transferred into a matrix. After renaming the rows (using the outlet's names), the matrix is turned into a DTM again and then tidy-ed.
+
+```{r tidyDTM}
+corpus <- DataframeSource(data) %>% VCorpus() %>% cleancorpus()
+
+timeFrames <- unique(data$timing)
+container <- c()
+for(time in timeFrames){
+  temp <- subset(corpus, meta(corpus)$timing == time)
+  texts <- sapply(temp, content) %>% 
+    paste(collapse = " ")
+  container <- c(container, texts)
+}
+
+corpusByTimeFrame <- VectorSource(container) %>% VCorpus() %>% cleancorpus()
+
+matDTM <- DocumentTermMatrix(corpusByTimeFrame) %>% as.matrix()
+rownames(matDTM) <- timeFrames
+
+DTM <- as.DocumentTermMatrix(matDTM, weighting = weightTf)
+tidyCorp <- tidy(DTM) %>% data.table()
+```
+
+The resulting `tidyCorp` can now be merged with the `nrc_emotions` lexicon. Because `data.table` processes a full join, I'll remove all the rows that do not contain any `count` information.
+
+```{r mergeLexiconDTM}
+sent <- tidyCorp[nrc_emotions, on = .(term = token)][!is.na(count)]
+```
+
+We can then use the data and create a radar chart. The process is a little ugly, because `chartJSRadar()` requires a list and I have not found an elegant way to create one. 
+
+
+```{r vizRadar}
+labs <- sent[order(emotion), unique(emotion)]
+scores <- list(
+  "before" = sent[document == "before", 
+                  .N, 
+                  by = emotion][order(emotion), N]/sent[document == "before", .N],
+  "during" = sent[document == "during",
+                  .N,
+                  by = emotion][order(emotion), N]/sent[document == "during", .N],
+  "after" = sent[document == "after", 
+                 .N, 
+                 by = emotion][order(emotion), N]/sent[document == "after", .N]
+)
+
+chartJSRadar(scores = scores, labs = labs) #, maxScale = 0.25)
+
+```
+
+```{r vizLollipop}
+A <- sent[,
+     .(N_emotions = .N),
+     by = c("emotion", "document")]
+B <- sent[,
+     .(N_documents = .N),
+     by = c("document")]
+
+C <- B[A, on = .(document = document)]
+
+C[, share := N_emotions / N_documents]
+
+ggplot(data = C,
+       mapping = aes(x = emotion, y = share, col = document)) +
+  geom_point() +
+  layout
+```
+We can follow the same procedure using the bing lexicon.
+
+```{r}
+bing <- get_sentiments("bing") %>% data.table()
+sent <- tidyCorp[bing, on = .(term = word)][!is.na(count)] %>% data.table()
+
+sent[,
+     N_documents := .N,
+     by = c("document")]
+
+sent[, freq := count/ N_documents]
+setorder(sent, document, sentiment, -freq)
+
+bingViz <- function(bSent = "positive",
+                    timing = "before",
+                    n = 10){
+  
+  color <- cPrimary
+  if(bSent == "negative"){
+    color <- cDanger
+  }
+  
+  ggplot(data = sent[sentiment == bSent & document == timing] %>% head(n),
+       mapping = aes(x = reorder(term, freq),
+                     y = freq)) +
+  geom_bar(stat = "identity", fill = color) +
+  scale_y_continuous(expand = c(0, NA)) +
+  labs(title = paste0(str_to_title(bSent), "ly loaded terms ", timing, " the event"),
+       y = "Term", x = "Frequency",
+       caption = "Using the bing lexicon.") +
+  layout +
+  coord_flip() +
+  theme(axis.line.x = element_blank())
+}
+
+bingViz("positive", "before")
+bingViz("positive", "during")
+bingViz("positive", "after")
+
+bingViz("negative", "before")
+bingViz("negative", "during")
+bingViz("negative", "after")
+
+```
+
+# Topics
+
+```{r}
+# Extract the clean text
+txt <- unlist(pblapply(corpus, content))
+
+# Remove any blanks
+txt <- pblapply(txt, blankRemoval)
+
+# Lexicalize
+txtLex <- lexicalize(txt)
+
+# Examine the vocab or key and value pairing between key ()
+head(txtLex$vocab, 15) 
+length(txtLex$vocab)  
+head(txtLex$documents[[1]][,1:12])
+head(txtLex$documents[[20]])
+
+# Corpus stats
+txtWordCount  <- word.counts(txtLex$documents, txtLex$vocab)
+txtDocLength  <- document.lengths(txtLex$documents)
+```
+
+```{r}
+# Cluster
+k       <- 3 
+numIter <- 25 
+alpha   <- 0.02 
+eta     <- 0.02 
+fit <- lda.collapsed.gibbs.sampler(documents      = txtLex$documents, 
+                                   K              = k, 
+                                   vocab          = txtLex$vocab, 
+                                   num.iterations = numIter, 
+                                   alpha          = alpha, 
+                                   eta            = eta, 
+                                   initial        = NULL, 
+                                   burnin         = 0,
+                                   compute.log.likelihood = TRUE)
+
+# Prototypical Document
+proto <- top.topic.documents(fit$document_sums, 1) # top 3 docs (rows) within topics (cols)
+for(i in proto){
+  print(txt[[i]])
+}
+```
+
+```{r}
+# LDAvis params
+# normalize the article probabilities to each topic
+theta <- t(pbapply(fit$document_sums + alpha, 2, function(x) x/sum(x))) # topic probabilities within a doc will sum to 1
+
+# normalize each topic word's impact to the topic
+phi  <- t(pbapply(fit$topics + eta, 1, function(x) x/sum(x)))
+
+ldaJSON <- createJSON(phi = phi,
+                      theta = theta, 
+                      doc.length = txtDocLength, 
+                      vocab = txtLex$vocab, 
+                      term.frequency = as.vector(txtWordCount))
+
+serVis(ldaJSON)
+```
+
+
+```{r}
+#| eval: false
+
+# Topic Extraction
+top.topic.words(fit$topics, 5, by.score=TRUE)
+
+# Name Topics
+topFive <- top.topic.words(fit$topics, 5, by.score=TRUE)
+topFive <- apply(topFive,2,paste, collapse='_') #collapse each of the single topics word into a single "name"
+
+# Topic fit for first 10 words of 2nd doc
+fit$assignments[[2]][1:10]
+
+# Tally the topic assignment for the second doc, which topic should we assign it to?
+table(fit$assignments[[2]])
+
+# What topic is article 2 assigned to?
+singleArticle <- docAssignment(fit$assignments[[2]])
+
+# Get numeric assignments for all docs
+topicAssignments <- unlist(pblapply(fit$assignments,
+                                    docAssignment))
+topicAssignments
+
+# Recode to the top words for the topics; instead of topic "1", "2" use the top words identified earlier
+length(topicAssignments)
+assignments <- recode(topicAssignments,
+                      `0` = topFive[1],
+                      `1` = topFive[2],
+                      `2` = topFive[3],
+                      `3` = topFive[4],
+                      `4` = topFive[5])
+
+```
+
+
+# Frequent Terms and Associations
+
+```{r}
+freqs <- list()
+for(t in data[, unique(timing)]){
+  corpus <- DataframeSource(data[timing == t]) %>% VCorpus() %>% cleancorpus() # stopwords = stopwords("english")
+  TDM <- TermDocumentMatrix(corpus, control = list(weighting = weightTf))
+  tdm <- TDM %>% as.matrix()
+  termFreq <- data.table(word = names(rowSums(tdm)),
+                         frequency = rowSums(tdm))
+  setorder(termFreq, -frequency)
+  freqs[[t]] <- termFreq
+}
+
+freqs[["before"]] %>% head(10) %>% kable()
+freqs[["during"]] %>% head(10) %>% kable()
+freqs[["after"]] %>% head(10) %>% kable()
+```
+
+```{r}
+
+wrapAssocs <- function(time = "before", term = "nft", cor = 0.2){
+  corpus <- DataframeSource(data[timing == time]) %>% VCorpus() %>% cleancorpus(stopwords = stopwords("english"))
+  TDM <- TermDocumentMatrix(corpus, control = list(weighting = weightTf))
+  associations <- findAssocs(TDM, term, corlimit = cor)
+  associations <- as.data.frame(associations)
+  associations$terms <- row.names(associations)
+  associations$terms <- factor(associations$terms, levels = associations$terms)
+  associations %<>% data.table()
+  associations
+}
+
+wrapAssocs(time = "before", term = "nft") %>% kable()
+wrapAssocs(time = "during", term = "nft") %>% kable()
+wrapAssocs(time = "after", term = "nft") %>% kable()
+```
+
+```{r}
+```
+
+
+# Preparation
+
+
+```{r createCorpus}
+corpus <- DataframeSource(data) %>% VCorpus() %>% cleancorpus()
+```
+
+```{r tdm}
+tdm <- TermDocumentMatrix(corpus, control = list(weighting = weightTf)) %>% 
+  as.matrix()
+
+tmp <- rowSums(tdm)
+frequencies <- data.table(terms = names(tmp),
+                          frequency = tmp)
+setorder(frequencies, -frequency)
+
+head(frequencies, 10)
+```

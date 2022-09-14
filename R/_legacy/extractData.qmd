@@ -1,0 +1,25 @@
+---
+title: "extractData"
+format: html
+---
+
+```{python modules}
+import twint
+```
+
+```{python example1}
+#| eval: false
+
+#configuration
+config = twint.Config()
+config.Search = "mvfw"
+config.Lang = "en"
+config.Since = "2021-11-27 00:00:00"
+config.Until = "2022-04-26 00:00:00"
+config.Limit = 100
+Store_csv = True
+config.Output = "mvfw.csv"
+#running search
+twint.run.Search(config)
+```
+

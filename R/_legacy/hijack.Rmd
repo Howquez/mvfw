@@ -1,0 +1,322 @@
+---
+title: "Hijacking the Metaverse"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r settings}
+options(stringsAsFactors = FALSE)
+invisible(Sys.setlocale(category = "LC_ALL", locale = "C"))
+set.seed(42)
+```
+
+```{r packages}
+# install.packages("pacman")
+pacman::p_load(magrittr, data.table, stringr, lubridate, # overviewR,
+               ggplot2, MetBrewer, knitr,
+               qdapRegex)
+```
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                plot.caption = element_text(colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+# colors <- met.brewer(name="Tam",n=7,type="discrete")
+cPrimary = "#00802F"
+cSecondary = "#EB6969"
+cInfo = "#FFF04B"
+cDanger <- "#EB6969"
+```
+
+```{r constants}
+STARTDATE <- as.Date("2022-03-23")
+ENDDATE   <- as.Date("2022-03-27")
+```
+
+
+# Data
+
+## TWINT Querry
+
+We query data using [TWINT.](https://github.com/twintproject/twint) As a starting point to fine tune our query, we use brands such as Tommy Hilfiger and Forever 21, who opened flagship stores in decentraland and of whom we know that they posted something about the MVFW.
+
+- **hilfiger** `twint -u TommyHilfiger -s "mvfw" --since "2022-02-23" --until "2022-04-24" --lang "en" -o dev/mvfw/data/Hilfigerdata.csv --csv`
+
+- **forever21** `twint -u Forever21 -s "Metaverse Fashion Week" --since "2022-02-23" --until "2022-04-24" --lang "en" -o dev/mvfw/data/Forever21data.csv --csv`
+
+```{r}
+hilfiger <- read.csv("../data/Hilfigerdata.csv", sep = "\t") %>%
+  data.table()
+forever21 <- read.csv("../data/Forever21data.csv", sep = "\t") %>% 
+  data.table()
+```
+
+
+- **tmp1** `twint -s "mvfw" --since "2022-03-24" --until "2022-03-27" --lang "en" -o dev/mvfw/data/MVFWdata1.csv --csv`
+
+- **tmp2** `twint -s "Metaverse Fashion Week" --since "2022-03-24" --until "2022-03-27" --lang "en" -o dev/mvfw/data/MVFWdata2.csv --csv`
+
+
+
+
+```{r readData}
+
+tmp1 <- read.csv("../data/MVFWdata1.csv", sep = "\t") %>% 
+  data.table()
+tmp2 <- read.csv("../data/MVFWdata2.csv", sep = "\t") %>% 
+  data.table()
+tmp <- data.table::rbindlist(l = list(tmp1, tmp2))
+```
+
+
+## Refactor
+
+```{r transformData}
+# String clean up 
+tmp[, tweet := iconv(tweet, "latin1", "ASCII", sub = "")]
+tmp[, tweet := rm_url(tweet,                    # remove URLs
+                      pattern = pastex("@rm_twitter_url", "@rm_url"))]
+
+# subset english sample of unique tweets (legacy)
+en <- tmp[language == "en"] %>% unique(by = "tweet")
+
+# create distinc ID
+en[, doc_id := .I]
+
+# change date & time format
+en[, created_at := str_sub(string = created_at,
+                           start  = 1,
+                           end    = 19) %>% ymd_hms()]
+en[, date := dmy(date)]
+
+# store mentions (@....)
+en[, customMentions := str_extract_all(string = tweet,
+                                       pattern = "@\\S+")]
+en[customMentions == "character(0)", 
+   customMentions := NA]
+en[, nMentions := str_count(string = customMentions, pattern = "@")]
+
+# define time frames
+en[, timing := "before"]
+en[date > STARTDATE, timing := "during"]
+en[date > ENDDATE, timing := "after"]
+
+en[, timing := factor(timing,
+                      ordered = TRUE,
+                      levels  = c("before", "during", "after"))]
+```
+
+```{r}
+# tag web3.0 usernames by regex
+en[str_detect(string = username,
+                pattern = "nfts?|crypt|krypt|meta|block|coin"),
+     domain := "web3.0"]
+# tag fashion-related usernames by regex
+en[str_detect(string = username,
+                pattern = "fashion|beauty"),
+     domain := "fashion"]
+
+en[, 
+     .(`Number of users` = unique(username) %>% length()), 
+     by = domain][order(`Number of users`)] %>% kable()
+
+# manual inspection
+en[username %in% c("bosonprotocol", "additionalrules", "media_diamante"),
+     domain := "web3.0"]
+en[username %in% c("ellemagazine"),
+     domain := "fashion"]
+
+# inspect
+# en[is.na(domain), .(username = unique(username))][order(username)]
+```
+
+
+```{r}
+# re-arrange data for corpus
+data <- en[,
+           .(doc_id,
+             text = tweet,
+             hashtags,
+             cashtags,
+             domain,
+             username,
+             mentions,
+             customMentions,
+             nMentions,
+             name,
+             place,
+             urls,
+             photos,
+             video,
+             geo,
+             created_at,
+             timing,
+             timezone,
+             replies_count,
+             retweets_count,
+             likes_count,
+             language,
+             id,
+             conversation_id,
+             retweet_id)]
+
+```
+
+The data contains `r format(tmp[, .N], big.mark = ".", decimal.mark = ",")` rows, each representing a tweet.  Its columns represent some IDs, meta information about URLs, retweets, etc. as well as the tweets itself (from which I removed URLs using `qdapRegex::rm_url()`). The data was scraped for a period ranging from `r en[, min(date)]` to `r en[, max(date)]`.
+
+I subset the data to focus on english tweets. In addition, I prune duplicated tweets. This leaves us with a [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html) that has `r format(en[, .N], big.mark = ".", decimal.mark = ",")` rows that correspond to unique English tweets.
+
+The metaverse fashionweek (MVFW) took place from March 24^th^ until March 27^th^. The following graph inspects the number of tweets posted in and around that time.
+
+```{r overview}
+tmp <- en[, .N, by = date]
+tmp[, mvfw := FALSE]
+tmp[date >= as.Date("2022-03-24") & date <= as.Date("2022-03-27"), mvfw := TRUE]
+
+n <- tmp[mvfw == TRUE, sum(N)]
+
+ggplot(data = tmp[date >= as.Date("2022-02-24") & date <= as.Date("2022-04-27")],
+       mapping = aes(x = date, y = N)) +
+  geom_line(color = "#00802F") +
+  geom_area(fill = "#00802F", alpha = 0.66) +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  geom_vline(xintercept = STARTDATE, col = "#FFFFFF") +
+  geom_vline(xintercept = ENDDATE, col = "#FFFFFF") +
+  layout +
+  theme(legend.position = "none") +
+  labs(title = "Absolute number of unique english tweets per day",
+       x = "Date",
+       y = "",
+       caption = paste0("The green shaded area represents MVFW period with a total of " ,n, " unique english tweets.",
+                        "White lines mark start- and end date of the MVFW."))
+```
+
+As the following table shows, there are few usernames who are associated to quite a lot of posts. A manual inspection yields that all of them are related to web3.0 topics such as blockchain, DeFi, crypto and NFTs.
+
+```{r numberOfTweets}
+tmp <- data[, .N, by = username]
+tmp %>% setorder(-N) %>% head(5) %>% kable(col.names = c("username", "number of tweets"))
+singleTweetUsers <- tmp[N == 1, .N]
+```
+
+Simultaneously, there are many usernames, who have only posted one tweet (that ended up being in our data). More precisely, there are `r tmp[N == 1, .N]` (or `r format(tmp[N == 1, .N] / tmp[, .N] * 100, digits = 2)`%) users with only one tweet in our data.
+
+
+```{r}
+data[, .(likes = sum(likes_count, na.rm = TRUE)), by = c("username", "domain")][order(-likes)]
+```
+
+# Web3.0 Evangelists
+
+```{r}
+tmp <- en[, .N, by = c("date", "domain")]
+tmp[, mvfw := FALSE]
+tmp[date >= as.Date("2022-03-24") & date <= as.Date("2022-03-27"), mvfw := TRUE]
+
+n <- tmp[mvfw == TRUE, sum(N)]
+
+ggplot(data = tmp[date >= as.Date("2022-02-24") & date <= as.Date("2022-04-27")],
+       mapping = aes(x = date, y = N, fill = domain)) +
+  geom_line(color = NA) +
+  geom_area(alpha = 0.66) +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  geom_vline(xintercept = STARTDATE, col = "#FFFFFF") +
+  geom_vline(xintercept = ENDDATE, col = "#FFFFFF") +
+  layout
+
+data[domain == "fashion", .N, by = timing]
+data[domain == "web3.0", .N, by = timing]
+data[is.na(domain), .N, by = timing]
+```
+
+Here is a random sample of 5 usernames by cluster:
+
+```{r}
+data.table(Evangelists  = data[domain == "web3.0"][sample(.N, 5), unique(username)],
+           Fashionistas = data[domain == "fashion"][sample(.N, 5), unique(username)],
+           Others       = data[is.na(domain)][sample(.N, 5), unique(username)]) %>%
+  kable()
+# data[sample(.N, 5), username, by = domain] %>% kable(col.names = "Username")
+```
+
+Here are the usernames that tweeted the most by domain:
+
+```{r}
+data[, .N, by = c("username", "domain")][N > 5][order(domain, -N)] %>% kable()
+
+tmp <- data[, .N, by = c("username", "domain")]
+ggplot(data = tmp[!is.na(domain)],
+       mapping = aes(x = N, fill = domain)) +
+  geom_histogram(col = NA, alpha = 0.66)
+```
+
+An here is the amount of tweets by group:
+
+```{r}
+data[, .N, by = domain] %>% kable()
+
+ggplot(data = tmp,
+       mapping = aes(x = domain, y = N, fill = domain)) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  layout +
+  labs(x = "")
+```
+
+```{r}
+ggplot(data = data[, .(domain, likes_count, retweets_count)],
+       mapping = aes(x = domain, y = retweets_count, fill = domain)) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(limits = c(0, NA),
+                     expand = c(0, NA)) +
+  layout +
+  labs(x = "")
+```
+
+Who received the most likes or retweets?
+
+```{r}
+data[order(-retweets_count), .(username, domain, likes_count, retweets_count, text, created_at)] %>% head(25) %>% kable()
+```
+How many people were tagged on average by group?
+
+```{r}
+data[, mean(nMentions, na.rm = TRUE), by = domain]
+```
+
+
+```{r}
+tmp <- data[, sum(likes_count), by = c("username", "domain")]
+# View(tmp[order(-V1)])
+```
+
+# Sentiment by Group
+
+# Notes
+
+Shall we differentiate between news (crypto news) and evangelists, how?
+
+# Background
+
+[Participating brands and artists include:](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#the-luxury-fashion-district) Dolce&Gabbana, Etro, Elie Saab, Imitation of Christ, DUNDAS, Nicholas Kirkwood, Franck Muller, FaithTribe, Chufy, Jacob & Co, Monnier Frères, Franck Muller, Gary McQueen, Mert Otsamo, Guo Pei, and AUROBOROS.
+
+In addition, brands such as Forever21, Philipp Plein and Esteé Lauder opened [virtual flagship stores](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#flagship-stores).
+
+The [Rarible Street] will be [populated with pop-up shops including the following brands](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#rarible-street): Placebo Digital Fashion House, The Fabricant, Artcade @ Fred Segal with exclusive drops by Atari Hotels and Subnation, Perry Ellis America, Artisant in collaboration with PUMA, Miss J Collection by Crypto Couture, Macr0matic (NFT artist), Fabeeo Breen, Girls Gang Label, The Immersive Kind, the exclusive collection of digital VAULT.swiss watches, and Fresh Couture.
