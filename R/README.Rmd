@@ -511,13 +511,13 @@ tmp %>% kable()
 ## Fashion
 
 ```{r}
-data[domain == "fashion", type == "fashion creator", .(text, username)][sample(.N, 15)] %>% kable()
-data[domain == "fashion", type == "content creator", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "fashion" & type == "fashion creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "fashion" & type == "content creators", .(text, username)][sample(.N, 15)] %>% kable()
 ```
 
 ## Web3
 
 ```{r}
-data[domain == "web3", type == "fashion creator", .(text, username)][sample(.N, 15)] %>% kable()
-data[domain == "web3", type == "content creator", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "web3" & type == "fashion creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "web3" & type == "content creators", .(text, username)][sample(.N, 15)] %>% kable()
 ```
