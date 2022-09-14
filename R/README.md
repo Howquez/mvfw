@@ -18,7 +18,7 @@ promises to be superior to conventional (fast) fashion in all of these
 regards as it allows consumers, for instance, to try on outfits
 virtually such that they can better assess the clothing even before its
 physical twins have been shipped. Another scenario is that it reduces
-the consumption of physical fashion since the virtual products suffice
+the consumption of physical fashion since the virtual fashions suffice
 as a means to represent oneself in social media or the *metaverse*.
 
 Along these lines several different stakeholders (including major brands
@@ -30,7 +30,7 @@ started to experiment at the intersection of non fungible tokens (NFTs)
 and fashion organizing the first ever *Metaverse Fashion Week* (MVFW)
 online in March 2022. In addition, the 2022’s New York Fashion Week is
 also accompanied by the [release of NFTs that match physical
-products](https://www.forbes.com/sites/yolarobert1/2022/09/10/alo-yoga-debuts-its-first-ready-to-wear-collection-with-a-limited-edition-nft-at-new-york-fashion-week/).
+fashions](https://www.forbes.com/sites/yolarobert1/2022/09/10/alo-yoga-debuts-its-first-ready-to-wear-collection-with-a-limited-edition-nft-at-new-york-fashion-week/).
 
 Due to this recency, we scrape twitter data to better understand the key
 stakeholders of the MVFW.
@@ -55,7 +55,7 @@ set.seed(42)
 ``` r
 # install.packages("pacman")
 pacman::p_load(magrittr, data.table, stringr, lubridate, # overviewR,
-               ggplot2, MetBrewer, knitr, fs, purrr,
+               ggplot2, ggtern, MetBrewer, knitr, fs, purrr,
                qdapRegex)
 ```
 
@@ -73,7 +73,7 @@ layout <- theme(panel.background = element_rect(fill = "transparent", color = NA
 )
 
 # color
-# colors <- met.brewer(name="Tam",n=7,type="discrete")
+# colors <- met.brewer(name="Tam",n=7,product="discrete")
 cPrimary = "#00802F"
 cSecondary = "#EB6969"
 cInfo = "#FFF04B"
@@ -228,44 +228,43 @@ data <- en[date <= as.Date("2022-04-24"), # due to brands query
 
 Now, we’ll tag users such that they fall into different categories of
 stakeholders. More precisely, I differentiate between two different
-domains: `web3` and `fashion`. In addition, I also create a second
-dimension – the `type` describing either `platform providers`,
-`content creators`, who one could also describe as evangelists or
-influencers, as well as `fashion creators`.
+domains: `web3` and `physical`. In addition, I also create a second
+dimension – the `product` describing either `platform`, `content`, who
+one could also describe as evangelists or influencers, as well as
+`fashion` (meaning conventional or digital fashion).
 
-Note that:[^3]
+To better visualize the classification, take a look at the following
+table where the rows represent the domains and the columns represent the
+product these stakeholders create (fashion, content, the platform
+itself).
 
--   conventional brands are described by
-    `domain =="fashion" & type=="fashion creators"`.
--   fashion influencers are described by
-    `domain =="fashion" & type=="content creators"`.
--   web3 evangelists are described by
-    `domain =="web3" & type=="content creators"`.
--   digital fashion brands are described by
-    `domain =="web3" & type=="fashion creators"`.
+|              | Fashion                    | Content    | Platform          |
+|--------------|----------------------------|------------|-------------------|
+| **Physical** | conventional fashion brand | influencer | \-                |
+| **Web3**     | digital fashion brand      | evangelist | platform provider |
 
 I’ve done the classification in a semi-automated way by focusing on the
 `username`s.
 
 ### Automated heuristics
 
-First, I apply regular expressions to tag web3 content creators.
+First, I apply regular expressions to tag web3 content.
 
 ``` r
 data[str_detect(string = username,
                 pattern = "nfts?|crypt|krypt|meta|block|coin"),
      `:=`(domain = "web3",
-          type   = "content creators")]
+          product   = "content")]
 ```
 
-Next, I use a similar approach to tag fashion and beauty related content
-creators.
+Next, I use a similar approach to tag fashion and beauty related
+content.
 
 ``` r
 data[str_detect(string = username,
                 pattern = "fashion|beauty|luxury"),
-     `:=`(domain = "fashion",
-          type   = "content creators")]
+     `:=`(domain = "physical",
+          product   = "content")]
 ```
 
 This yields many usernames that fall into neither of these categories.
@@ -274,7 +273,7 @@ This is where the manual part starts.
 ### Manual inspection
 
 The following figure shows a density plot that illustrates the number of
-likes a user received.[^4]
+likes a user received.[^3]
 
 ``` r
 tmp <- data[is.na(domain), 
@@ -440,31 +439,31 @@ data[username %in% c("Deadfellaz", "gossapegirl", "asian_mint", "canessadcl",   
                      "deadfellaz" # not sure where to put these guys since they have some sort of cooperation
                      ), 
      `:=`(domain = "web3",
-          type   = "content creators")]
+          product   = "content")]
 
 # tag web3 x fashion
 data[username %in% c("thefabricant", "xrcouture", "auroboros_ltd", "wirelyss",    # NAME WEB3 FASHION HERE!
                      "polygondressing", "the_vogu", "shopcider", "houseofdaw",
                      "neuno_io", "stylexchange_io", "parzival_kazuto", "bitski"), 
      `:=`(domain = "web3",
-          type   = "fashion creators")]
+          product   = "fashion")]
 
-# tag content creators & media
-data[username %in% c("thalia", "maghanmcd", "diamondhandbag", "realfaithtribe"   # NAME CONTENT CREATORS HERE!
+# tag content & media
+data[username %in% c("thalia", "maghanmcd", "diamondhandbag", "realfaithtribe"   # NAME content HERE!
                      ), 
-     `:=`(domain = "fashion",
-          type   = "content creators")]
+     `:=`(domain = "physical",
+          product   = "content")]
 
 # tag fashion brands
 data[username %in% brands[, unique(username)], # NAME BRANDS HERE!
-     `:=`(domain = "fashion",
-          type   = "fashion creators")]
+     `:=`(domain = "physical",
+          product   = "fashion")]
 
 # tag platform- or ecosystem related users
 data[username %in% c("decentraland", "bosonprotocol", "exclusible", "threedium",  # NAME PLATFORMS HERE!
                      "pangeadao", "dragoncityio", "whiterabbitgate"), 
      `:=`(domain = "web3",
-          type   = "platform providers")]
+          product   = "platform")]
 ```
 
 The data contains 1.320 rows, each representing a tweet. Its columns
@@ -478,7 +477,7 @@ data <- data[,
                text,
                username,
                domain,
-               type,
+               product,
                timing,
                date,
                created_at,
@@ -511,36 +510,36 @@ Here is a list of the 25 users who received the most likes. Almost all
 of them are centered around the web3 domain.
 
 ``` r
-data[, .(likes = sum(likes_count, na.rm = TRUE)), by = c("username", "domain", "type")][order(-likes)] %>% head(25) %>% kable()
+data[, .(likes = sum(likes_count, na.rm = TRUE)), by = c("username", "domain", "product")][order(-likes)] %>% head(25) %>% kable()
 ```
 
-| username      | domain  | type               | likes |
-|:--------------|:--------|:-------------------|------:|
-| bosonprotocol | web3    | platform providers |  4049 |
-| decentraland  | web3    | platform providers |  2382 |
-| fanggangnft   | web3    | content creators   |  1317 |
-| 8siannft      | web3    | content creators   |   956 |
-| thalia        | fashion | content creators   |   929 |
-| dolcegabbana  | fashion | fashion creators   |   855 |
-| metaweartoken | web3    | content creators   |   854 |
-| deadfellaz    | web3    | content creators   |   822 |
-| tommyhilfiger | fashion | fashion creators   |   666 |
-| exclusible    | web3    | platform providers |   662 |
-| parcelnft     | web3    | content creators   |   655 |
-| xrcouture     | web3    | fashion creators   |   599 |
-| thefabricant  | web3    | fashion creators   |   468 |
-| maghanmcd     | fashion | content creators   |   408 |
-| hoganbrand    | fashion | fashion creators   |   395 |
-| gossapegirl   | web3    | content creators   |   383 |
-| themetakey    | web3    | content creators   |   379 |
-| asian_mint    | web3    | content creators   |   340 |
-| therebelsnft  | web3    | content creators   |   324 |
-| canessadcl    | web3    | content creators   |   308 |
-| ericpi888     | web3    | content creators   |   306 |
-| etroofficial  | fashion | fashion creators   |   298 |
-| itskac        | web3    | content creators   |   294 |
-| threedium     | web3    | platform providers |   260 |
-| marc0matic    | fashion | fashion creators   |   258 |
+| username      | domain   | product  | likes |
+|:--------------|:---------|:---------|------:|
+| bosonprotocol | web3     | platform |  4049 |
+| decentraland  | web3     | platform |  2382 |
+| fanggangnft   | web3     | content  |  1317 |
+| 8siannft      | web3     | content  |   956 |
+| thalia        | physical | content  |   929 |
+| dolcegabbana  | physical | fashion  |   855 |
+| metaweartoken | web3     | content  |   854 |
+| deadfellaz    | web3     | content  |   822 |
+| tommyhilfiger | physical | fashion  |   666 |
+| exclusible    | web3     | platform |   662 |
+| parcelnft     | web3     | content  |   655 |
+| xrcouture     | web3     | fashion  |   599 |
+| thefabricant  | web3     | fashion  |   468 |
+| maghanmcd     | physical | content  |   408 |
+| hoganbrand    | physical | fashion  |   395 |
+| gossapegirl   | web3     | content  |   383 |
+| themetakey    | web3     | content  |   379 |
+| asian_mint    | web3     | content  |   340 |
+| therebelsnft  | web3     | content  |   324 |
+| canessadcl    | web3     | content  |   308 |
+| ericpi888     | web3     | content  |   306 |
+| etroofficial  | physical | fashion  |   298 |
+| itskac        | web3     | content  |   294 |
+| threedium     | web3     | platform |   260 |
+| marc0matic    | physical | fashion  |   258 |
 
 ## Tweets by domain
 
@@ -550,11 +549,11 @@ data[, .(likes = sum(likes_count, na.rm = TRUE)), by = c("username", "domain", "
 data[, .N, by = domain] %>% kable()
 ```
 
-| domain  |    N |
-|:--------|-----:|
-| NA      | 1707 |
-| web3    |  901 |
-| fashion |  103 |
+| domain   |    N |
+|:---------|-----:|
+| NA       | 1707 |
+| web3     |  901 |
+| physical |  103 |
 
 ``` r
 tmp <- data[, .N, by = c("username", "domain")]
@@ -597,25 +596,25 @@ ggplot(data = data[, .(domain, retweets_count)],
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-## Tweets by type
+## Tweets by product
 
 ### Number of Tweets
 
 ``` r
-data[, .N, by = type] %>% kable()
+data[, .N, by = product] %>% kable()
 ```
 
-| type               |    N |
-|:-------------------|-----:|
-| NA                 | 1707 |
-| content creators   |  777 |
-| fashion creators   |  133 |
-| platform providers |   94 |
+| product  |    N |
+|:---------|-----:|
+| NA       | 1707 |
+| content  |  777 |
+| fashion  |  133 |
+| platform |   94 |
 
 ``` r
-tmp <- data[, .N, by = c("username", "type")]
+tmp <- data[, .N, by = c("username", "product")]
 ggplot(data = tmp,
-       mapping = aes(x = type, y = N, fill = type)) +
+       mapping = aes(x = product, y = N, fill = product)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(limits = c(0, NA),
                      expand = c(0, NA)) +
@@ -628,8 +627,8 @@ ggplot(data = tmp,
 ### Number of Likes
 
 ``` r
-ggplot(data = data[, .(type, likes_count)],
-       mapping = aes(x = type, y = likes_count, fill = type)) +
+ggplot(data = data[, .(product, likes_count)],
+       mapping = aes(x = product, y = likes_count, fill = product)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(limits = c(0, NA),
                      expand = c(0, NA)) +
@@ -642,8 +641,8 @@ ggplot(data = data[, .(type, likes_count)],
 ### Number of Retweets
 
 ``` r
-ggplot(data = data[, .(type, retweets_count)],
-       mapping = aes(x = type, y = retweets_count, fill = type)) +
+ggplot(data = data[, .(product, retweets_count)],
+       mapping = aes(x = product, y = retweets_count, fill = product)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(limits = c(0, NA),
                      expand = c(0, NA)) +
@@ -653,46 +652,46 @@ ggplot(data = data[, .(type, retweets_count)],
 
 ![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-## Tweets by type x domain
+## Tweets by product x domain
 
 ``` r
-data[, .(`Number of tweets` = .N), by = c("domain", "type")] %>% kable()
+data[, .(`Number of tweets` = .N), by = c("domain", "product")] %>% kable()
 ```
 
-| domain  | type               | Number of tweets |
-|:--------|:-------------------|-----------------:|
-| NA      | NA                 |             1707 |
-| web3    | content creators   |              714 |
-| web3    | fashion creators   |               93 |
-| web3    | platform providers |               94 |
-| fashion | content creators   |               63 |
-| fashion | fashion creators   |               40 |
+| domain   | product  | Number of tweets |
+|:---------|:---------|-----------------:|
+| NA       | NA       |             1707 |
+| web3     | content  |              714 |
+| web3     | fashion  |               93 |
+| web3     | platform |               94 |
+| physical | content  |               63 |
+| physical | fashion  |               40 |
 
 ``` r
-data[, .(`Number of likes` = sum(likes_count)), by = c("domain", "type")] %>% kable()
+data[, .(`Number of likes` = sum(likes_count)), by = c("domain", "product")] %>% kable()
 ```
 
-| domain  | type               | Number of likes |
-|:--------|:-------------------|----------------:|
-| NA      | NA                 |            6249 |
-| web3    | content creators   |           14961 |
-| web3    | fashion creators   |            2256 |
-| web3    | platform providers |            7894 |
-| fashion | content creators   |            1835 |
-| fashion | fashion creators   |            2924 |
+| domain   | product  | Number of likes |
+|:---------|:---------|----------------:|
+| NA       | NA       |            6249 |
+| web3     | content  |           14961 |
+| web3     | fashion  |            2256 |
+| web3     | platform |            7894 |
+| physical | content  |            1835 |
+| physical | fashion  |            2924 |
 
 ``` r
-data[, .(`Number of retweets` = sum(retweets_count)), by = c("domain", "type")] %>% kable()
+data[, .(`Number of retweets` = sum(retweets_count)), by = c("domain", "product")] %>% kable()
 ```
 
-| domain  | type               | Number of retweets |
-|:--------|:-------------------|-------------------:|
-| NA      | NA                 |               1389 |
-| web3    | content creators   |               5057 |
-| web3    | fashion creators   |                917 |
-| web3    | platform providers |               1976 |
-| fashion | content creators   |                517 |
-| fashion | fashion creators   |                825 |
+| domain   | product  | Number of retweets |
+|:---------|:---------|-------------------:|
+| NA       | NA       |               1389 |
+| web3     | content  |               5057 |
+| web3     | fashion  |                917 |
+| web3     | platform |               1976 |
+| physical | content  |                517 |
+| physical | fashion  |                825 |
 
 # Timing
 
@@ -707,14 +706,14 @@ tmp[, share := paste0(round(100*N/sum), "%")]
 tmp %>% kable()
 ```
 
-| timing | domain  |   N | sum | share |
-|:-------|:--------|----:|----:|:------|
-| before | fashion |  42 | 103 | 41%   |
-| during | fashion |  39 | 103 | 38%   |
-| after  | fashion |  22 | 103 | 21%   |
-| before | web3    | 506 | 901 | 56%   |
-| during | web3    | 210 | 901 | 23%   |
-| after  | web3    | 185 | 901 | 21%   |
+| timing | domain   |   N | sum | share |
+|:-------|:---------|----:|----:|:------|
+| before | physical |  42 | 103 | 41%   |
+| during | physical |  39 | 103 | 38%   |
+| after  | physical |  22 | 103 | 21%   |
+| before | web3     | 506 | 901 | 56%   |
+| during | web3     | 210 | 901 | 23%   |
+| after  | web3     | 185 | 901 | 21%   |
 
 Even though we queried the data such that the duration of the time
 `before` is exactly as long as the duration of the time `after` (+/-28
@@ -735,14 +734,14 @@ tmp[, share := paste0(round(100*N/sum), "%")]
 tmp %>% kable()
 ```
 
-| timing | domain  |     N |   sum | share |
-|:-------|:--------|------:|------:|:------|
-| before | fashion |   943 |  4759 | 20%   |
-| during | fashion |  3660 |  4759 | 77%   |
-| after  | fashion |   156 |  4759 | 3%    |
-| before | web3    | 16224 | 25111 | 65%   |
-| during | web3    |  5952 | 25111 | 24%   |
-| after  | web3    |  2935 | 25111 | 12%   |
+| timing | domain   |     N |   sum | share |
+|:-------|:---------|------:|------:|:------|
+| before | physical |   943 |  4759 | 20%   |
+| during | physical |  3660 |  4759 | 77%   |
+| after  | physical |   156 |  4759 | 3%    |
+| before | web3     | 16224 | 25111 | 65%   |
+| during | web3     |  5952 | 25111 | 24%   |
+| after  | web3     |  2935 | 25111 | 12%   |
 
 …as well as for the number of retweets.
 
@@ -753,14 +752,14 @@ tmp[, share := paste0(round(100*N/sum), "%")]
 tmp %>% kable()
 ```
 
-| timing | domain  |    N |  sum | share |
-|:-------|:--------|-----:|-----:|:------|
-| before | fashion |  317 | 1342 | 24%   |
-| during | fashion |  932 | 1342 | 69%   |
-| after  | fashion |   93 | 1342 | 7%    |
-| before | web3    | 5240 | 7950 | 66%   |
-| during | web3    | 1677 | 7950 | 21%   |
-| after  | web3    | 1033 | 7950 | 13%   |
+| timing | domain   |    N |  sum | share |
+|:-------|:---------|-----:|-----:|:------|
+| before | physical |  317 | 1342 | 24%   |
+| during | physical |  932 | 1342 | 69%   |
+| after  | physical |   93 | 1342 | 7%    |
+| before | web3     | 5240 | 7950 | 66%   |
+| during | web3     | 1677 | 7950 | 21%   |
+| after  | web3     | 1033 | 7950 | 13%   |
 
 However, both of these engagement metrics (`likes_count` and
 `retweets_count`) show different patterns across domains. The web3
@@ -768,35 +767,35 @@ domain triggered by far the most engagement before the event, while the
 fashion domain received the most attention during the event (on the
 basis of a comparable amount of tweets).
 
-## Timing x type
+## Timing x product
 
 How much was posted before, during and after the MVFW?
 
 ``` r
-tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "type")][order(type)]
-tmp[, sum := sum(N), by = type]
+tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "product")][order(product)]
+tmp[, sum := sum(N), by = product]
 tmp[, share := paste0(round(100*N/sum), "%")]
 tmp %>% kable()
 ```
 
-| timing | type               |   N | sum | share |
-|:-------|:-------------------|----:|----:|:------|
-| before | content creators   | 423 | 777 | 54%   |
-| during | content creators   | 166 | 777 | 21%   |
-| after  | content creators   | 188 | 777 | 24%   |
-| before | fashion creators   |  60 | 133 | 45%   |
-| during | fashion creators   |  62 | 133 | 47%   |
-| after  | fashion creators   |  11 | 133 | 8%    |
-| before | platform providers |  65 |  94 | 69%   |
-| after  | platform providers |   8 |  94 | 9%    |
-| during | platform providers |  21 |  94 | 22%   |
+| timing | product  |   N | sum | share |
+|:-------|:---------|----:|----:|:------|
+| before | content  | 423 | 777 | 54%   |
+| during | content  | 166 | 777 | 21%   |
+| after  | content  | 188 | 777 | 24%   |
+| before | fashion  |  60 | 133 | 45%   |
+| during | fashion  |  62 | 133 | 47%   |
+| after  | fashion  |  11 | 133 | 8%    |
+| before | platform |  65 |  94 | 69%   |
+| after  | platform |   8 |  94 | 9%    |
+| during | platform |  21 |  94 | 22%   |
 
 # Examplary Tweets
 
 ## Fashion
 
 ``` r
-data[domain == "fashion" & type == "fashion creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "physical" & product == "fashion", .(text, username)][sample(.N, 15)] %>% kable()
 ```
 
 | text                                                                                                                                                                                                                                                                                      | username      |
@@ -818,7 +817,7 @@ data[domain == "fashion" & type == "fashion creators", .(text, username)][sample
 | Have you heard the news? We are excited to share that we are the only beauty brand at @decentralands \#MetaverseFashionWeek! Our experience includes a wearable NFT, inspired by our iconic \#AdvancedNightRepair Serum. Learn more: + @wwd \#MVFW                                        | esteelauder   |
 
 ``` r
-data[domain == "fashion" & type == "content creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "physical" & product == "content", .(text, username)][sample(.N, 15)] %>% kable()
 ```
 
 | text                                                                                                                                                                                                                                                                               | username        |
@@ -842,7 +841,7 @@ data[domain == "fashion" & type == "content creators", .(text, username)][sample
 ## Web3
 
 ``` r
-data[domain == "web3" & type == "fashion creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "web3" & product == "fashion", .(text, username)][sample(.N, 15)] %>% kable()
 ```
 
 | text                                                                                                                                                                                                                                                                                 | username        |
@@ -864,7 +863,7 @@ data[domain == "web3" & type == "fashion creators", .(text, username)][sample(.N
 | SOLDDDDD OUT! We are super excited and proud to announce that our pre-sale has concluded and all the NFTs were sold. A very big thanks to all the community members who made it possible. \#NFT \#NFTs \#NFTCommunity \#NFTCollection \#DigitalFashion \#Fashion \#MVFW              | xrcouture       |
 
 ``` r
-data[domain == "web3" & type == "content creators", .(text, username)][sample(.N, 15)] %>% kable()
+data[domain == "web3" & product == "content", .(text, username)][sample(.N, 15)] %>% kable()
 ```
 
 | text                                                                                                                                                                                                                                                                                     | username        |
@@ -885,6 +884,98 @@ data[domain == "web3" & type == "content creators", .(text, username)][sample(.N
 | This giant VR person in Dragon City is so sick, I couldn’t find the runway event so I thought I’d have to wear the Japanese futurism @DatGuyGZO designs (hoodie and shoes) that we worked on together. \#MVFW Only in @decentraland \~                                                   | michi_todd      |
 | Dolce & Gabbana (@dolcegabbana) embrace the \#metaverse at Milan fashion week, by Jessica Cartner-Morley (@JessC_M) in @guardian                                                                                                                                                         | deusexmetaverse |
 
+# Ternary plot
+
+> Tweets toward the top have a higher share of retweets, those toward
+> the bottom right have a higher share of likes, and those toward the
+> bottom left are in the Ratio danger zone — a higher share of replies.
+> [See
+> FiveThirtyEight](https://fivethirtyeight.com/features/the-worst-tweeter-in-politics-isnt-trump/).
+
+``` r
+tmp <- data[!(is.na(domain)), 
+                   .(replies = replies_count, retweets = retweets_count, likes = likes_count, 
+                     domain, product)]
+
+ggtern(data = tmp,
+       mapping = aes(x = replies,
+                     y = retweets,
+                     z = likes,
+                     col = domain)) +
+  geom_point(alpha = 0.5, size = 2) +
+  scale_T_continuous(breaks = c(0, 0.5)) +
+  scale_L_continuous(breaks = c(0, 0.5)) +
+  scale_R_continuous(breaks = c(0, 0.5)) +
+  theme_bw() +
+  theme_hidegrid() 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+ggtern(data = tmp,
+       mapping = aes(x = replies,
+                     y = retweets,
+                     z = likes,
+                     col = product)) +
+  geom_point(alpha = 0.5, size = 2) +
+  scale_T_continuous(breaks = c(0, 0.5)) +
+  scale_L_continuous(breaks = c(0, 0.5)) +
+  scale_R_continuous(breaks = c(0, 0.5)) +
+  theme_bw() +
+  theme_hidegrid() 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+``` r
+ternaryWrapper <- function(d = "physical", # domain
+                           p = "fashion",  # product
+                           c = cPrimary){  # color
+  ggtern(data = tmp[domain == d & product == p],
+         mapping = aes(x = replies,
+                       y = retweets,
+                       z = likes)) +
+    geom_point(alpha = 0.5, size = 2, col = c) +
+    scale_T_continuous(breaks = c(0, 0.5)) +
+    scale_L_continuous(breaks = c(0, 0.5)) +
+    scale_R_continuous(breaks = c(0, 0.5)) +
+    theme_bw() +
+    theme_hidegrid() +
+    labs(title = paste0(d, " domain & ", p, " product."))
+    # theme_showarrows() +
+    # theme_hidetitles()
+}
+```
+
+``` r
+ternaryWrapper(d = "physical",
+               p = "fashion")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+ternaryWrapper(d = "web3",
+               p = "fashion")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
+
+``` r
+ternaryWrapper(d = "physical",
+               p = "content")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
+
+``` r
+ternaryWrapper(d = "web3",
+               p = "content")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
+
 [^1]: e.g. [1](https://www.voguebusiness.com/technology/metaverse-fashion-week-the-hits-and-misses),
     [2](https://www.vogue.com/article/metaverse-fashion-week-decentraland),
     [3](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#flagship-stores),
@@ -898,8 +989,5 @@ data[domain == "web3" & type == "content creators", .(text, username)][sample(.N
     priveporter, philipp_plein, ElieSaabWorld, HoganBrand, IOCNFTs,
     dundaslondon
 
-[^3]: Note to myself: create table, if two dimensions are really
-    required.
-
-[^4]: I limit this figure to users that received at least one but less
+[^3]: I limit this figure to users that received at least one but less
     than 1000 likes.
