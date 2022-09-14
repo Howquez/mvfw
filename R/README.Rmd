@@ -505,3 +505,19 @@ tmp[, sum := sum(N), by = type]
 tmp[, share := paste0(round(100*N/sum), "%")]
 tmp %>% kable()
 ```
+
+# Examplary Tweets
+
+## Fashion
+
+```{r}
+data[domain == "fashion", type == "fashion creator", text][sample(.N, 15)] %>% kable()
+data[domain == "fashion", type == "content creator", text][sample(.N, 15)] %>% kable()
+```
+
+## Web3
+
+```{r}
+data[domain == "web3", type == "fashion creator", text][sample(.N, 15)] %>% kable()
+data[domain == "web3", type == "content creator", text][sample(.N, 15)] %>% kable()
+```

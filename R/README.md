@@ -790,6 +790,100 @@ tmp %>% kable()
 | after  | platform providers |   8 |  94 | 9%    |
 | during | platform providers |  21 |  94 | 22%   |
 
+# Examplary Tweets
+
+## Fashion
+
+``` r
+data[domain == "fashion", type == "fashion creator", text][sample(.N, 15)] %>% kable()
+```
+
+| text                                                                                                                                                                                                                                      | V1    |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------|
+| Coming soon! \#MVFW \#DolceGabbana \#decentralized \#decentralizedland \#nft \#Wearables                                                                                                                                                  | FALSE |
+| The Marc-O-Matic Store is live in @decentraland for \#Metaverse Fashion Week Big shout out to Decentraland team, @rarible @themetakey For this opportunity. Store Located: -49,69 \#MVFW22 \#nfts \#fashion \#3d \#NFTCommumity \#MATIC   | FALSE |
+| \#MVFW hosted artists and designers including fashion giants like Tommy Hilfiger, Este Lauder, Philipp Plein, Selfridges and Dolce & Gabbana.                                                                                             | FALSE |
+| We are excited to join @decentraland in the very first \#Metaverse \#fashionweek More coming soon                                                                                                                                         | FALSE |
+| The Liquid Paisley collection takes to the catwalk at the first-ever Etro Metaverse fashion show in @Decentraland. \#UNXD \#MVFW                                                                                                          | FALSE |
+| “DO WE REALLY NEED \#Metaverse FASHION WEEK?” YES!!!                                                                                                                                                                                      | FALSE |
+| Inspired by the next frontier of digital technology \#TommyHilfiger will be adopting @BosonProtocol during \#MVFW in @Decentraland to enable the sale of physical items as \#NFTs in \#BosonPortal. Join us!                              | FALSE |
+| During the opening events, @Threedium and @decentraland will host @CathyHackl as the first-ever Official Chair of \#Metaverse \#FashionWeek                                                                                               | FALSE |
+| Moore From L.A.: What Is Metaverse Fashion Week? The Decentraland Event’s Creator, Producer Explain - WWD                                                                                                                                 | FALSE |
+| Join us at the world’s first-ever Metaverse Fashion Week, happening on @decentraland now. Featuring an eye-catching floral print, our digital pop-up booth is impossible to miss. Discover more: \#MetaCharlesKeith \#MVFW \#Decentraland | FALSE |
+| \#DolceGabbana showcases at the First Metaverse Virtual Fashion Week hosted by @decentraland in partnership with @unxd_nft. Enter the metaverse and explore the Dolce&Gabbana pop-up at                                                   | FALSE |
+| Thrilled to be part of the first Metaverse Fashion Week on \#Decentraland. \#Savethedate March, 25th at 4pm CET. \#MVFW                                                                                                                   | FALSE |
+| The runway is going virtual again! @Decentraland collabs with @UNXD_NFT to present ‘Metaverse Fashion Week.’ The week will consist of designer showcases, pop-up shops, after parties on March 24th 27th 2022.                            | FALSE |
+| OMWow! We have our address and we’re right next to @Acura in Decentraland!!! Stay tuned for our scheduling during Metaverse Fashion Week! @decentraland                                                                                   | FALSE |
+| How the metaverse influenced New York Fashion Week via @voguebusiness                                                                                                                                                                     | FALSE |
+
+``` r
+data[domain == "fashion", type == "content creator", text][sample(.N, 15)] %>% kable()
+```
+
+| text                                                                                                                                                                                                                                                              | V1    |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------|
+| ————————————– : \#fashion \#celebrities \#news \#tipsoffashion \#metaverse \#fashionweek \#upcoming                                                                                                                                                               | FALSE |
+| \#DolceGabbana showcases at the First Metaverse Virtual Fashion Week hosted by @decentraland in partnership with @unxd_nft. Enter the metaverse and explore the Dolce&Gabbana pop-up at                                                                           | FALSE |
+| Virtual social world @decentraland is continuing its preparations for the launch of Metaverse Fashion Week, set to take place from March 24 to 27. \#metaverse \#metaversefashionweek \#fashionweek \#decentraland \#NFT                                          | FALSE |
+| @ggcasimiro\_ What you can expect from @decentraland is not only the luxury street, we have the Rareable street with indie designerstake a look at the schedule#mvfw @XRCouture @subham101                                                                        | FALSE |
+| Weve transformed \#AdvancedNightRepair into a \#Metaverse experience and created a wearable NFT inspired by our number one serum designed by \#EsteePartner @thealexbox. Experience it for yourself & get the wearable before its gone @decentralands \#MVFW now: | FALSE |
+| Dolce & Gabbana embrace the \#Metaverse at Milan fashion week                                                                                                                                                                                                     | FALSE |
+| It’s time to unveil more \#HoganX Untraditional afterparty with @exclusible will hit @decentraland on March 26th Keep an eye out, more to follow! \#HOGAN \#MVFW                                                                                                  | FALSE |
+| @ggcasimiro\_ We can clearly see the big luxury houses embracing the \#mvfw. It will impact the way we see fashion and the way we consume fashion. @XRCouture @decentraland @subham101 @aninanet                                                                  | FALSE |
+| DRESSX x MTA METAVERSE FASHION WEEK Tmrw @ 10am EST / 3pm CET at the @theMTAofficial Catwalk (96,-13) in DCL! Collect all 4 of our POAPS for an NFT AIRDROP! Join our discord to find out more!                                                                   | FALSE |
+| How the metaverse influenced New York Fashion Week via @voguebusiness                                                                                                                                                                                             | FALSE |
+| Paris Fashion Week supports the metaverse \#fashionweek \#digital \#fashiontech \#metaverse \#blockchain                                                                                                                                                          | FALSE |
+| Alpha DiamondHandBag x @gossapegirl are featured on the runways of Metaverse Fashion Week on March 24 We’re the FIRST EVER Handbag Wearable available on @Decentraland WIN 1 of 5 DiamondHandBag wearables: ENTER RT, Like & Tag 3 Friends \#MVFW \#Gossapegirls  | FALSE |
+| Moore From L.A.: What Is Metaverse Fashion Week? The Decentraland Event’s Creator, Producer Explain - WWD                                                                                                                                                         | FALSE |
+| @LUCII_UV Where can we find the @decentraland metaverse fashion week schedule?                                                                                                                                                                                    | FALSE |
+| Here’s this week’s @voguebusiness NFT Tracker, with projects from @flexworld\_, @CryptopantiesRR, @XRCouture and @aliceandolivia. The XR Couture items dropped today – might be a wardrobe option for Metaverse Fashion Week?                                     | FALSE |
+
+## Web3
+
+``` r
+data[domain == "web3", type == "fashion creator", text][sample(.N, 15)] %>% kable()
+```
+
+| text                                                                                                                                                                                                                                                                             | V1    |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------|
+| Only 3 more days to Boson Portal Fashion District launch Metaverse Fashion Week 24th - 27th March                                                                                                                                                                                | FALSE |
+| @decentraland will host the Metaverse Fashion Week, which will start on March 24th The event will feature designers such as Tommy Hilfiger and Paco Rabanne \#event \#fashion \#designers \#metaverse \#web3 \#fashion \#fashionindustry \#fashionweek                           | FALSE |
+| Why thank you for the follow on IG @decentraland Looking forward to not only DJing more events in DCL but to continue to grow within the community with my parcel and wearables! Thanks for such an awesome year so far \#decentraland \#metaverse \#MVFW                        | FALSE |
+| Fashion week is getting closer… stay tuned for more! \#MVFW \#FashionNFT \#digitalfashion \#WearableNFT \#Metaverse \#virtualrunway \#NFTCommunity                                                                                                                               | FALSE |
+| Thank you guys for sharing your dope looks wearing \#AllThatGlitter I cant decide which one is my favorite, but as promised I just dropped those who shared their pic another look! Enjoy \#mvfw \#web3fashion \#Metaverse                                                       | FALSE |
+| Heres my submission for \#MVFW The T-Rax helmets ! @decentraland @MetaPartyDCL @ParcelNFT \#Metaverse \#MANA                                                                                                                                                                     | FALSE |
+| \#MVFW where expressing fashion has no limits @DragonCityIO @MetaverseLabs \#DragonStyle @JsCoincollector @nmkenji @KanardAzul                                                                                                                                                   | FALSE |
+| RARE FASHION NFT GIVEAWAY To celebrate our participation in @decentraland’s \#metaverse fashion week, we’re giving away this RARE 1/1 NFT by @radarboy3000 To enter: 1Like & Retweet this tweet 2Follow us on Twitter 3Join our Discord and say                                  | FALSE |
+| We are excited to announce our partnership with @OpenTeeIO for Metaverse Fashion Week and future Metaverse events! OpenTee is creating unique Pangea wearables for our Fashion Week event that will be featured on our catwalk. Make sure to be there for the chance to get one! | FALSE |
+| Metaverse Fashion Week was fun - cu next time @MetaWearDrip @avewarriors @decentraland @dolcegabbana @UNXD_NFT \#MVFW22 \#MVFW                                                                                                                                                   | FALSE |
+| WLDFNGZ IS COMING. Metaverse Fashion Week Limited Capsule Drop March 24th                                                                                                                                                                                                        | FALSE |
+| Guess where we’ll show up @decentraland @MetaverseLabs \#Decentraland \#Metamotive \#NFTdrop \#NFTs \#NFTCommmunity \#3D \#fashion \#MVFW                                                                                                                                        | FALSE |
+| Tommy Hilfiger to Showcase Spring 2022 Collections and \#NFT Wearables at Decentralands \#Metaverse Fashion Week \#CryptoCurrencyNews via @coinjupiter                                                                                                                           | FALSE |
+| International Fashion Week Dubai Makes History; being the first Fashion Week to convert into NFT’s \#fashion \#nfts \#dubai \#NFT \#Metaverse                                                                                                                                    | FALSE |
+| Dress like youre already famous Make me famous! Meow\~ \#FashionWeek Join the Catto Fam: \#Metaverse \#NFTProject \#NFTCommmunity \#Polygon \#PolygonNFT \#NFTCommunity \#NFTGiveaway \#AnimeNFT \#NFT \#SneakPeak \#GameFi \#NFTcollections                                     | FALSE |
+
+``` r
+data[domain == "web3", type == "content creator", text][sample(.N, 15)] %>% kable()
+```
+
+| text                                                                                                                                                                                                                                                                            | V1    |
+|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------|
+| JAPANESE COMMUNITY MEET-UP \#2 \#MVFW We’ll see you in 2 hrs! Hosted by our CM @\_Ks_Library Meet-up: Discord: Pop-up Space:                                                                                                                                                    | FALSE |
+| On March 22, American cosmetics brand Estee Lauder will serve as the exclusive beauty brand partner of Metaverse Fashion Week in Decentraland. Read More                                                                                                                        | FALSE |
+| This is going to be special, thanks for choosing Xpozd. \#MVFW                                                                                                                                                                                                                  | FALSE |
+| HOLE-Y-GOLD!!! Submitting this glowy, shiny, slicy see-thru number for MVFW 22 Competition \#MVFW Good Luck Creators @MetaPartyDCL @ParcelNFT @decentraland                                                                                                                     | FALSE |
+| What a way to start the Week with @MoMamiMusic!! Thanks to the @DCLBabyDolls for the event \#MVFW \#InternationalWomensMonth                                                                                                                                                    | FALSE |
+| Mark your calendars We are launching 2 exclusive \#NFT projects from notable \#fashion \#photographers (March 24th -27th) at Metaverse Fashion Week in (#Decentraland). Turn on Notifications \#Discord Opens Soon! \#mvfw \#fashionsweek \#NFTs \#NFTCommunity \#nftcollectors | FALSE |
+| Cider in Decentraland. Count us in. 3/24/2022 - 3/27/2022 \#MVFW \#Ciderland \#Decentraland \#Metaverse                                                                                                                                                                         | FALSE |
+| Yaaaay! Countdown to \#MVFW . I’m as excited as a a kid in a candy store \#nftspace - anyone else planning to join?                                                                                                                                                             | FALSE |
+| CRYPTO NEWS ALERT! The first-ever Metaverse Fashion Week: Digital fashion is here to stay \# \#Crypto \#BTC \#ETH \#DOGE                                                                                                                                                        | FALSE |
+| Want to know what went down at the first ever Metaverse Fashion Week. This article has all the deets. \#Metaverse \#fashion                                                                                                                                                     | FALSE |
+| What a journey its been @decentraland @tiktok_us Follow me on tiktok for more Metaverse content! My Day 3 DJ set starts in 1 hour! Come to coordinates 2,17 Footage by @MetaPartyDCL @NewLegendsNFT \#MVFW \#Mana \#metaverse \#nft \#fashionweek                               | FALSE |
+| Honored to have @RealSophiaRobot walking the runway for \#DOCTORdripp wearables :) at \#MVFW @decentraland \#findingsophiatherobot @percylau_studio @HansonRobotics @em_DCL @PeanutbuttaDCL                                                                                     | FALSE |
+| & Decentraland Announce Brands Participating in Metaverse Fashion Week \| Corp. (NEO Exchange Canada: COIN) (Frankfurt Stock Exchange: 76M) (OTCQB US: SMURF) ( \#decentraland                                                                                                  | FALSE |
+| We’re live at the @decentraland \#MVFW closing party with @AUROBOROS_LTD X @Grimezsz Grimes is seen exclusively dressed in the ‘Mystique’ bodysuit available in Auroboros World in Boson Portal, the metaverse marketplace to buy physical items as \#NFTs                      | FALSE |
+| \#Decentraland (#MANA), a virtual gaming marketplace, is poised to organise the first-ever \#Metaverse Fashion Week (#MVFW) on its platform. - Bitcoinleef                                                                                                                      | FALSE |
+
 [^1]: e.g. [1](https://www.voguebusiness.com/technology/metaverse-fashion-week-the-hits-and-misses),
     [2](https://www.vogue.com/article/metaverse-fashion-week-decentraland),
     [3](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#flagship-stores),
