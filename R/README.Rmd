@@ -1,5 +1,5 @@
 ---
-title: "Freeriding the Metaverse"
+title: "Free-riding the Metaverse: How Crypto-Marketeers Stole Fashion Brands the Show During the Metaverse Fashion Week"
 output: 
   github_document
 ---
@@ -15,16 +15,8 @@ knit: (function(input, ...) {
   })
 -->
 
-# Contents
-
-The second section shows **[how we processed the data](#data)** while the third section contains a brief **[exploratory analysis](#exploration)**. I also show **[random samples of tweets by domain](#examplary-tweets)** and present **[Ternary plots](#ternary-plot)** that visualize engagement ratios.
-
----
-
-_(The following four code chunks set up the document.)_
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
@@ -67,25 +59,62 @@ STARTDATE <- as.Date("2022-03-23")
 ENDDATE   <- as.Date("2022-03-27")
 ```
 
-# Data
 
-We query data using [TWINT](https://github.com/twintproject/twint) and the command line interface. Because twitter limits scrolls while browsing a timeline, one can scrape about [3200 tweets per query](https://github.com/twintproject/twint#limits-imposed-by-twitter). For this reason, we run multiple queries and vary them in two dimensions: the [time frames](#time-frames) as well as the [user names](#brands).
+# Background
 
-## Time frames
+- Recent shifts toward the _metaverse pose a challenge to the dominant logic of conventional branding_ and connecting consumers to brands through digital assets ([Hofstetter et al. 2022](https://link.springer.com/article/10.1007/s11002-022-09639-2); [Colicev 2022](https://doi.org/10.1016/j.ijresmar.2022.07.003)).
+- The seminal focus in this emerging area of marketing is the assumption that blending online and offline experiences in the metaverse enhances engagement and builds more communal experiences between brands and consumers.
+- One trend is the inception of _major brand events performed in the metaverse. The Metaverse Fashion Week_ (MVFW), designed to provide immersive, digital fashion experiences, is a recent example.
+- The current work explores how fashion brands and other stakeholders in the metaverse (consumers, influencers, digital platform providers and crypto marketeers) _shape and funnel attention_ during these events.
 
-The following queries scrape data from all users that either mentioned `mvfw` or `metaverse fashion week` in different periods between 2022-02-23 and 2022-04-27. The results are stored in different `.csv` files, loaded and row-binded to one data.table called `tmp`.
+
+
+# Research Question
+
+> Which of these stakeholders contribute and capitalize during major branding events in the metaverse and through which specific engagement tactics.
+
+
+
+# Conceptual Model & Scoping of Key Stakeholders
+
+![Strategic environment](img/strategicEnvironment.png)
+
+- Conventional fashion brands (green) open the gates between the physical and virtual sphere, i.e. web3.
+- Simultaneously, brands also expose their audiences to the native web3 stakeholders (red).
+- Hence, passive stakeholders risk to lose attention to other stakeholders and spheres.
+- We utilize scraped twitter data to identify key stakeholders and show how they manage to capitalize attention during a major digital fashion event (MVFW).
+
+
+
+# Methods
+
+We scraped tweets covering the MVFW & classify users into the respective groups of stakeholders outlined previously. We then compare their activity as well as the corresponding engagement metrics.
+
+**Why MVFW?**
+
+- First large-scale metaverse event designed to attract a broad range of user groups.
+- This attracts stakeholders as well as audiences from both physical and virtual spheres.
+- Existence of free-riding possibilities.
+
+**Why twitter?**
+
+- Represents voices of stakeholders and actions of attending and non-attending audiences.
+
+## Query
 
 ```
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-02-23" --until "2022-03-02" --lang "en" -o dev/mvfw/data/timeFrames/tmp1.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-03-02" --until "2022-03-09" --lang "en" -o dev/mvfw/data/timeFrames/tmp2.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-03-09" --until "2022-03-16" --lang "en" -o dev/mvfw/data/timeFrames/tmp3.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-03-16" --until "2022-03-23" --lang "en" -o dev/mvfw/data/timeFrames/tmp4.csv --csv
 twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-03-23" --until "2022-03-28" --lang "en" -o dev/mvfw/data/timeFrames/tmp5.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-03-28" --until "2022-04-04" --lang "en" -o dev/mvfw/data/timeFrames/tmp6.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-04-04" --until "2022-04-11" --lang "en" -o dev/mvfw/data/timeFrames/tmp7.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-04-11" --until "2022-04-18" --lang "en" -o dev/mvfw/data/timeFrames/tmp8.csv --csv
-twint -s "mvfw OR (Metaverse Fashion Week)" --since "2022-04-18" --until "2022-04-27" --lang "en" -o dev/mvfw/data/timeFrames/tmp9.csv --csv
 ```
+
+- Tweets^[We use [TWINT](https://github.com/twintproject/twint) and the command line interface.] mentioning either `mvfw` or `metaverse`, `fashion` & `week`.
+- 4 weeks prior, during and 4 weeks after the event.
+- Incremental procedure to reduce sampling issues^[Because twitter limits scrolls while browsing a timeline, one can scrape about [3200 tweets per query](https://github.com/twintproject/twint#limits-imposed-by-twitter). For this reason, we run multiple queries and vary the time frames.].
+- Additional search for brands.^[In addition, we scrape data by usernames that represent brands we identified synthesizing different news articles that covered the event (e.g. [1](https://www.voguebusiness.com/technology/metaverse-fashion-week-the-hits-and-misses), [2](https://www.vogue.com/article/metaverse-fashion-week-decentraland), [3](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#flagship-stores), [4](https://www.lifestyleasia.com/ind/gear/tech/highlights-from-2022-metaverse-fashion-week/) and [5](https://metaversefashionweek.com/)). This yields a list of 27 usernames that you can see with `brands[, unique(usernames)]`.] ^[More precisely, we used the following query: `twint -u [username] -s "mvfw OR (Metaverse Fashion Week)" --since "2022-02-23" --until "2022-04-24" --lang "en" -o dev/mvfw/data/brands/[username].csv --csv`.]
+
+_You can find all of the queries [here](https://github.com/Howquez/mvfw/blob/main/data/queries.xlsx)._
+
+
+## Data
 
 ```{r readBatchesTiming}
 data_path    <- "../data/timeFrames/"
@@ -97,20 +126,6 @@ datasets     <- purrr::map(file_paths, read.csv, sep = "\t")
 tmp <- data.table::rbindlist(l = datasets)
 ```
 
-## Brands
-
-In addition, we scrape data by usernames that represent brands we identified synthesizing different news articles that covered the event.^[e.g. [1](https://www.voguebusiness.com/technology/metaverse-fashion-week-the-hits-and-misses), [2](https://www.vogue.com/article/metaverse-fashion-week-decentraland), [3](https://decentraland.org/blog/announcements/metaverse-fashion-week-is-here/#flagship-stores), [4](https://www.lifestyleasia.com/ind/gear/tech/highlights-from-2022-metaverse-fashion-week/) and [5](https://metaversefashionweek.com/)]
-
-This yields a list of 27 usernames.^[tommyhilfiger, forever21, esteelauder, KarlLagerfeld, McQueen, dkny, dressxcom, dolcegabbana, EtroOfficial, FranckMuller, Selfridges, Bulova, PacoRabanne, ArtistVasarely, PUMA, PerryEllis, Fred_Segal, VAULTswiss, MissJAlexander, marc0matic, Charles_Keith, priveporter, philipp_plein, ElieSaabWorld, HoganBrand, IOCNFTs, dundaslondon]
-Replace `[username]` by the desired brand to scrape the corresponding tweets between 2022-02-23 and 2022-04-24. The resulting `.csv` files are then again loaded and row-binded to one data.table called `brands`.
-
-```
-twint -u [username] -s "mvfw OR (Metaverse Fashion Week)" --since "2022-02-23" --until "2022-04-24" --lang "en" -o dev/mvfw/data/brands/[username].csv --csv
-```
-<!--
-=CONCAT("twint -u ", B2, " -s "'mvfw OR (Metaverse Fashion Week)" --since "'2022-02-23" --until "'2022-04-24" --lang "'en" -o dev/mvfw/data/brands/", B2, ".csv --csv")
--->
-
 ```{r readBatchesBrands}
 data_path   <- "../data/brands/"
 file_paths  <- fs::dir_ls(path = data_path, glob = "*.csv")
@@ -118,15 +133,10 @@ datasets    <- purrr::map(file_paths, read.csv, sep = "\t")
 brands <- data.table::rbindlist(l = datasets)
 ```
 
-## Refactor
-
-First, row-bind both data.tables, i.e. `brands` and `tmp`.
-
 ```{r combineData}
 temp <- data.table::rbindlist(l = list(tmp, brands))
 ```
 
-Then make sure to use a common character encoding, remove ULRs before you remove duplicate tweets. Subsequently, add an ID, work on time and date formats, etc.
 
 ```{r transformData, warning = FALSE}
 # String clean up 
@@ -135,104 +145,65 @@ temp[, tweet := rm_url(tweet,                    # remove URLs
                       pattern = pastex("@rm_twitter_url", "@rm_url"))]
 
 # subset english sample of UNIQUE tweets
-en <- temp[language == "en"] %>% unique(by = "tweet")
+data <- temp[language == "en"] %>% unique(by = "tweet")
 
 # create distinc ID
-en[, doc_id := .I]
+data[, doc_id := .I]
 
 # change date & time format
-en[, created_at := str_sub(string = created_at,
+data[, created_at := str_sub(string = created_at,
                            start  = 1,
                            end    = 19) %>% ymd_hms()]
-en[, date := ymd(date)]
+data[, date := ymd(date)]
 
 # store mentions (@....)
-en[, customMentions := str_extract_all(string = tweet,
+data[, customMentions := str_extract_all(string = tweet,
                                        pattern = "@\\S+")]
-en[customMentions == "character(0)", 
+data[customMentions == "character(0)", 
    customMentions := NA]
-en[, nMentions := str_count(string = customMentions, pattern = "@")]
+data[, nMentions := str_count(string = customMentions, pattern = "@")]
 ```
 
 ```{r addTimings}
-en[, timing := "after"]
-en[date <= ENDDATE, timing := "during"]
-en[date < STARTDATE, timing := "before"]
+data[, timing := "after"]
+data[date <= ENDDATE, timing := "during"]
+data[date < STARTDATE, timing := "before"]
 
-en[, timing := factor(timing,
-                      ordered = TRUE,
-                      levels  = c("before", "during", "after"))]
+data[, timing := factor(timing,
+                        ordered = TRUE,
+                        levels  = c("before", "during", "after"))]
 ```
 
-```{r}
-# re-arrange data for corpus
-data <- en[date <= as.Date("2022-04-24"), # due to brands query
-           .(doc_id,
-             text = tweet,
-             hashtags,
-             cashtags,
-             username,
-             mentions,
-             customMentions,
-             nMentions,
-             name,
-             place,
-             urls,
-             photos,
-             video,
-             geo,
-             timing,
-             date,
-             created_at,
-             timezone,
-             replies_count,
-             retweets_count,
-             likes_count,
-             language,
-             id,
-             conversation_id,
-             retweet_id)]
-```
+- `r data[, username %>% unique() %>% length %>% format(big.mark = ",")]` unique users and
+`r data[, tweet %>% unique() %>% length %>% format(big.mark = ",")]` unique English tweets.
+- Passive and active engagement metrics (`likes`, `replies` & `retweets`).
 
-## Classification
-Now, we'll tag users such that they fall into different categories of stakeholders. More precisely, I differentiate between two different domains: `web3` and `physical`. In addition, I also create a second dimension -- the `product` describing either `platform`, `content`, who one could also describe as evangelists or influencers, as well as `fashion` (meaning conventional or digital fashion).
 
-To better visualize the classification, take a look at the following table where the rows represent the domains and the columns represent the product these stakeholders create (fashion, content, the platform itself).
 
-|              | Fashion                    | Content    | Platform          |
-|--------------|----------------------------|------------|-------------------|
-| **Physical** | conventional fashion brand | influencer | -                 |
-| **Web3**     | digital fashion brand      | evangelist | platform provider |
+# Results
 
-I've done the classification in a semi-automated way by focusing on the `username`s.
-
-### Automated heuristics
-
-First, I apply regular expressions to tag web3 content.
-
-```{r regexWeb3}
+```{r classifyCryptoMarketeers}
 data[str_detect(string = username,
                 pattern = "nfts?|crypt|krypt|meta|block|coin"),
      `:=`(domain = "web3",
           product   = "content")]
 ```
 
-Next, I use a similar approach to tag fashion and beauty related content.
-
-```{r regexFashion}
+```{r classifyInfluencers}
 data[str_detect(string = username,
                 pattern = "fashion|beauty|luxury"),
      `:=`(domain = "physical",
           product   = "content")]
 ```
 
-This yields many usernames that fall into neither of these categories. This is where the manual part starts.
+```{r classifyBrands}
+# tag fashion brands
+data[username %in% brands[, unique(username)], # NAME BRANDS HERE!
+     `:=`(domain = "physical",
+          product   = "fashion")]
+```
 
-### Manual inspection
-
-The following figure shows a density plot that illustrates the number of likes a user received.^[I limit this figure to users that received at least one but less than 1000 likes.]
-
-```{r warning = FALSE}
+```{r warning = FALSE, eval = FALSE}
 tmp <- data[is.na(domain), 
      .(likes = sum(likes_count, na.rm = TRUE)),
      by = username][order(-likes)]
@@ -247,26 +218,9 @@ ggplot(data = tmp[likes > 0 & likes < 1000],
 
 ```
 
-```{r}
-known   <- tmp[1:100, sum(likes)]
-overall <- tmp[, sum(likes)]
-share   <- round(100*known/overall)
-```
+```{r classifyManually}
 
-Next, I display a table of the 100 most relevant users, measured by the number of likes they received for all their posts in our data. These 100 users account for `r share`% of the likes we observe in our data that are not yet categorized by the automatic approach outlined [above](#automated-heuristics).
-
-```{r showNA}
-tmp %>% 
-  head(100) %>%
-  kable()
-```
-
-
-Subsequently, I search the top 100 users in twitter using a web browser, read their description (or biography) as well their posts in our data. Having reviewed all of them, I'll classify them by hand.
-
-```{r tags}
-
-# tag web3 freeriders
+# tag crypto marketeers
 data[username %in% c("Deadfellaz", "gossapegirl", "asian_mint", "canessadcl",     # NAME WEB3 HERE!
                      "ericpi888", "itskac", "antisecretsoci2", "cmnnewsofficial",
                      "cathyhackl", # maybe too much fame to be a free rider?
@@ -290,23 +244,18 @@ data[username %in% c("Deadfellaz", "gossapegirl", "asian_mint", "canessadcl",   
      `:=`(domain = "web3",
           product   = "content")]
 
-# tag web3 x fashion
-data[username %in% c("thefabricant", "xrcouture", "auroboros_ltd", "wirelyss",    # NAME WEB3 FASHION HERE!
+# tag digital fashion
+data[username %in% c("thefabricant", "xrcouture", "auroboros_ltd", "wirelyss",    # NAME DIGITAL FASHION HERE!
                      "polygondressing", "the_vogu", "shopcider", "houseofdaw",
                      "neuno_io", "stylexchange_io", "parzival_kazuto", "bitski"), 
      `:=`(domain = "web3",
           product   = "fashion")]
 
-# tag content & media
-data[username %in% c("thalia", "maghanmcd", "diamondhandbag", "realfaithtribe"   # NAME content HERE!
-                     ), 
+# tag influencers
+data[username %in% c("thalia", "maghanmcd", "diamondhandbag", "realfaithtribe", # NAME content HERE!
+                     "voguemagazine", "voguesingapore", "forbeslife"), 
      `:=`(domain = "physical",
           product   = "content")]
-
-# tag fashion brands
-data[username %in% brands[, unique(username)], # NAME BRANDS HERE!
-     `:=`(domain = "physical",
-          product   = "fashion")]
 
 # tag platform- or ecosystem related users
 data[username %in% c("decentraland", "bosonprotocol", "exclusible", "threedium",  # NAME PLATFORMS HERE!
@@ -315,12 +264,10 @@ data[username %in% c("decentraland", "bosonprotocol", "exclusible", "threedium",
           product   = "platform")]
 ```
 
-The data contains `r format(tmp[, .N], big.mark = ".", decimal.mark = ",")` rows, each representing a tweet.  Its columns represent some IDs, meta information about URLs, retweets, etc. as well as the tweets itself (from which I removed URLs using `qdapRegex::rm_url()`). 
-
 ```{r saveData}
 data <- data[,
              .(doc_id,
-               text,
+               text = tweet,
                username,
                domain,
                product,
@@ -350,236 +297,133 @@ data <- data[,
 save(data, file = "../data/processed/mvfw.RData")
 ```
 
-
-# Exploration
-
-Here is a list of the 25 users who received the most likes. Almost all of them are centered around the web3 domain.
-
-```{r}
-data[, .(likes = sum(likes_count, na.rm = TRUE)), by = c("username", "domain", "product")][order(-likes)] %>% head(25) %>% kable()
+```{r SegmentNaming}
+data[domain == "web3" & product == "content", Segment := "Crypto Marketeers"]
+data[domain == "web3" & product == "fashion", Segment := "Digital Fashion"]
+data[domain == "web3" & product == "platform", Segment := "Platform Providers"]
+data[domain == "physical" & product == "content", Segment := "Fashion Influencers"]
+data[domain == "physical" & product == "fashion", Segment := "Conventional Fashion Brands"]
 ```
 
-## Tweets by domain
-
-### Number of Tweets
-
-```{r}
-data[, .N, by = domain] %>% kable()
-tmp <- data[, .N, by = c("username", "domain")]
-ggplot(data = tmp,
-       mapping = aes(x = domain, y = N, fill = domain)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
+```{r descriptiveResults}
+data[!is.na(domain),
+     .(`Active Users` = username %>% unique() %>% length(),
+       Tweets = .N,
+       Likes = likes_count %>% sum(na.rm = TRUE) %>% format(big.mark = ",")),
+     by = Segment] %>% 
+  kable()
 ```
-
-### Number of Likes
-
-```{r}
-ggplot(data = data[, .(domain, likes_count)],
-       mapping = aes(x = domain, y = likes_count, fill = domain)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
-```
-
-### Number of Retweets
-
-```{r}
-ggplot(data = data[, .(domain, retweets_count)],
-       mapping = aes(x = domain, y = retweets_count, fill = domain)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
-```
-
-## Tweets by product
-
-### Number of Tweets
-
-```{r}
-data[, .N, by = product] %>% kable()
-tmp <- data[, .N, by = c("username", "product")]
-ggplot(data = tmp,
-       mapping = aes(x = product, y = N, fill = product)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
-```
-
-### Number of Likes
-
-```{r}
-ggplot(data = data[, .(product, likes_count)],
-       mapping = aes(x = product, y = likes_count, fill = product)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
-```
-
-### Number of Retweets
-
-```{r}
-ggplot(data = data[, .(product, retweets_count)],
-       mapping = aes(x = product, y = retweets_count, fill = product)) +
-  geom_bar(stat = "identity") +
-  scale_y_continuous(limits = c(0, NA),
-                     expand = c(0, NA)) +
-  layout +
-  labs(x = "")
-```
-
-
-## Tweets by product x domain
-
-```{r}
-data[, .(`Number of tweets` = .N), by = c("domain", "product")] %>% kable()
-data[, .(`Number of likes` = sum(likes_count)), by = c("domain", "product")] %>% kable()
-data[, .(`Number of retweets` = sum(retweets_count)), by = c("domain", "product")] %>% kable()
-```
-
-# Timing
-
-## Timing x domain
-
-How much was posted before, during and after the MVFW?
-
-```{r}
-tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "domain")][order(domain)]
-tmp[, sum := sum(N), by = domain]
-tmp[, share := paste0(round(100*N/sum), "%")]
-tmp %>% kable()
-```
-
-Even though we queried the data such that the duration of the time `before` is exactly as long as the duration of the time `after` (+/-`r STARTDATE - data[, min(date)]` days), we count less tweets in both domains (web3 as well as fashion) posted after the MVFW took place.
-
-```{r eval = FALSE}
-data[, min(date)] - STARTDATE
-data[, max(date)] - ENDDATE
-```
-
-The same holds true for the number of likes received...
-
-```{r}
-tmp <- data[!is.na(domain), .(N = sum(likes_count)), by = c("timing", "domain")][order(domain)]
-tmp[, sum := sum(N), by = domain]
-tmp[, share := paste0(round(100*N/sum), "%")]
-tmp %>% kable()
-```
-
-...as well as for the number of retweets.
-
-```{r}
-tmp <- data[!is.na(domain), .(N = sum(retweets_count)), by = c("timing", "domain")][order(domain)]
-tmp[, sum := sum(N), by = domain]
-tmp[, share := paste0(round(100*N/sum), "%")]
-tmp %>% kable()
-```
-
-However, both of these engagement metrics (`likes_count` and `retweets_count`) show different patterns across domains. The web3 domain triggered by far the most engagement before the event, while the fashion domain received the most attention during the event (on the basis of a comparable amount of tweets).
-
-## Timing x product
-
-How much was posted before, during and after the MVFW?
-
-```{r}
-tmp <- data[!is.na(domain), .(N = .N), by = c("timing", "product")][order(product)]
-tmp[, sum := sum(N), by = product]
-tmp[, share := paste0(round(100*N/sum), "%")]
-tmp %>% kable()
-```
-
-# Examplary Tweets
-
-## Fashion
-
-```{r}
-data[domain == "physical" & product == "fashion", .(text, username)][sample(.N, 15)] %>% kable()
-data[domain == "physical" & product == "content", .(text, username)][sample(.N, 15)] %>% kable()
-```
-
-## Web3
-
-```{r}
-data[domain == "web3" & product == "fashion", .(text, username)][sample(.N, 15)] %>% kable()
-data[domain == "web3" & product == "content", .(text, username)][sample(.N, 15)] %>% kable()
-```
-
-# Ternary plot
 
 > Tweets toward the top have a higher share of retweets, those toward the bottom right have a higher share of likes, and those toward the bottom left are in the Ratio danger zone — a higher share of replies. [See FiveThirtyEight](https://fivethirtyeight.com/features/the-worst-tweeter-in-politics-isnt-trump/).
 
-```{r}
+```{r ternaryPlot0}
 tmp <- data[!(is.na(domain)), 
                    .(replies = replies_count, retweets = retweets_count, likes = likes_count, 
-                     domain, product)]
+                     Sphere = domain, product, Segment)]
 
 ggtern(data = tmp,
        mapping = aes(x = replies,
                      y = retweets,
                      z = likes,
-                     col = domain)) +
-  geom_point(alpha = 0.5, size = 2) +
+                     col = Sphere)) +
+  geom_point(alpha = 0.5, size = 3) +
   scale_T_continuous(breaks = c(0, 0.5)) +
   scale_L_continuous(breaks = c(0, 0.5)) +
   scale_R_continuous(breaks = c(0, 0.5)) +
+  scale_color_manual(values = c(cPrimary, cDanger)) +
   theme_bw() +
-  theme_hidegrid() 
+  theme_hidegrid() + 
+  theme(legend.position = "bottom") +
+  theme(legend.title=element_blank())
+```
+```{r shareEngagementMetrics}
+lkShare <- round(data[domain == "web3", sum(likes_count)] / data[!is.na(domain), sum(likes_count)]*100)
+rtShare <- round(data[domain == "web3", sum(retweets_count)] / data[!is.na(domain), sum(retweets_count)]*100)
+rpShare <- round(data[domain == "web3", sum(replies_count)] / data[!is.na(domain), sum(replies_count)]*100)
 ```
 
-```{r}
-ggtern(data = tmp,
-       mapping = aes(x = replies,
-                     y = retweets,
-                     z = likes,
-                     col = product)) +
-  geom_point(alpha = 0.5, size = 2) +
-  scale_T_continuous(breaks = c(0, 0.5)) +
-  scale_L_continuous(breaks = c(0, 0.5)) +
-  scale_R_continuous(breaks = c(0, 0.5)) +
-  theme_bw() +
-  theme_hidegrid() 
-```
-
+- Conventional fashion brands were relatively passive towards non-attending audiences (only `r brands[, username %>% unique() %>% length()]` out of 30 tweeted at all).
+- Other web3-native stakeholders demonstrated greater overall activity and actively tagged conventional fashion brands to gain attention.
+- Although conventional fashion brands maximized user engagements through likes and comments, web3 stakeholders accounted for majority of activity and engagement (likes: `r lkShare`%,
+retweets: `r rtShare`%,
+replies: `r rpShare`%).
+- We conclude that the conventional fashion brands’ passiveness allowed especially crypto marketeers to ride the wave the brands created.
 
 ```{r ternWrapper}
-ternaryWrapper <- function(d = "physical", # domain
-                           p = "fashion",  # product
-                           c = cPrimary){  # color
-  ggtern(data = tmp[domain == d & product == p],
+ternaryWrapper <- function(s = "Crypto Marketeers",
+                           c = cSecondary,   # color
+                           t = NA){        # title
+  plotTitle <- s
+  if(!is.na(t)){
+    plotTitle <- t
+  }
+  ggtern(data = tmp[Segment == s],
          mapping = aes(x = replies,
                        y = retweets,
                        z = likes)) +
-    geom_point(alpha = 0.5, size = 2, col = c) +
+    geom_point(alpha = 0.5, size = 3, col = c) +
     scale_T_continuous(breaks = c(0, 0.5)) +
     scale_L_continuous(breaks = c(0, 0.5)) +
     scale_R_continuous(breaks = c(0, 0.5)) +
     theme_bw() +
     theme_hidegrid() +
-    labs(title = paste0(d, " domain & ", p, " product."))
+    labs(title = plotTitle) +
+    theme(plot.title = element_text(hjust = 0.5))
     # theme_showarrows() +
     # theme_hidetitles()
 }
 ```
 
-```{r}
-ternaryWrapper(d = "physical",
-               p = "fashion")
-ternaryWrapper(d = "web3",
-               p = "fashion")
-ternaryWrapper(d = "physical",
-               p = "content")
-ternaryWrapper(d = "web3",
-               p = "content")
+Brands' tweets triggered mostly likes — which are easy to do and not as public or expressive as a retweet, and which require less thought than a reply.
+
+```{r ternaryBrands}
+ternaryWrapper(s = "Conventional Fashion Brands", c = cPrimary)
 ```
 
+Influencers managed to score slightly higher on retweets and replies. In addition, the tweets are more heterogeneous.
+
+```{r ternaryInfluencers}
+ternaryWrapper(s = "Fashion Influencers", c = cPrimary)
+```
+
+Crypto Marketeers scored highest on retweets and replies. As a consequence, their tweets effectively maximized reach compared to all other stakeholders during MVFW event.
+
+```{r ternaryCrypto}
+ternaryWrapper(s = "Crypto Marketeers", c = cSecondary)
+```
+
+Platform Providers achieve a similar engagement profile as brands with a slightly higher density in likes.
+
+```{r ternaryPlatform}
+ternaryWrapper(s = "Platform Providers", c = cSecondary)
+```
+
+
+# Implications
+
+## Theoretical
+
+- First systematic analysis on how seemingly unrelated stakeholders (such as Crypto Marketeers and web3 Platform Providers) enter branding events (such as the MVFW) to drive attention and traffic towards their own channels.
+- Important implications for how brands need to think beyond their own channels and audiences but also how decentralized branding events attract stakeholders that are unrelated, yet potentially harmful to their core business.
+
+## Practical
+
+- Domain-specific events are at risk of free- riding entities that instrumentalize shifts towards the metaverse to effectively advertize (and ultimately sell) unrelated products (i.e. unrelated NFTs) during these events.
+- Low engagement of (and ultimately with) traditional fashion brands highlight the need to better integrate activities in both the web3 and traditional social media channels (i.e. web2) to also draw non- attending audiences’ attention.
+
+
+# Appendix
+
+## Classification
+I tag users such that they fall into different categories of stakeholders. More precisely, I differentiate between two different domains: `web3` and `physical`. In addition, I also create a second dimension -- the `product` describing either `platform`, `content` as well as `fashion`.
+
+To better visualize the classification, take a look at the following table where the rows represent the domains and the columns represent the product these stakeholders create (fashion, content, the platform itself).
+
+|              | Fashion                    | Content          | Platform          |
+|--------------|----------------------------|------------------|-------------------|
+| **Physical** | Conventional Fashion Brand | Influencer       | -                 |
+| **Web3**     | Digital Fashion Brand      | Crypto Marketeer | Platform Provider |
+
+I run a semi-automated classification approach by focusing on the `username`s. More pecisely, I first use simple _Regular expressions using patterns such as `"nfts?|crypt|krypt|meta|block|coin"` to define Crypto Marketeers and Influencers (`"fashion|beauty|luxury"`). Morevover, I rely on the brands queried [above](#query) to define Conventional Fashion Brands (`data[username %in% brands[, unique(username)]`).
+
+This yields many usernames that fall into neither of these categories, which is where the manual part starts.
