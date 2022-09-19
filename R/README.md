@@ -1,6 +1,3 @@
-Free-riding the Metaverse: How Crypto-Marketeers Stole Fashion Brands
-the Show During the Metaverse Fashion Week
-================
 
 <!--
 # To render the output to another directory, use the following lines in the YAML header
@@ -12,6 +9,8 @@ knit: (function(input, ...) {
     )
   })
 -->
+
+![Banner](img/MVFW_Banner.jpg)
 
 # Background
 

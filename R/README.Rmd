@@ -1,5 +1,4 @@
 ---
-title: "Free-riding the Metaverse: How Crypto-Marketeers Stole Fashion Brands the Show During the Metaverse Fashion Week"
 output: 
   github_document
 ---
@@ -15,10 +14,11 @@ knit: (function(input, ...) {
   })
 -->
 
+![Banner](img/MVFW_Banner.jpg)
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
-
 
 ```{r settings}
 options(stringsAsFactors = FALSE)
