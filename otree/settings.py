@@ -3,8 +3,8 @@ from os import environ
 SESSION_CONFIGS = [
     dict(
         name='Social_media_feed',
-        app_sequence=['feed'],
-        num_demo_participants=3,
+        app_sequence=['feed', 'questionnaire'],
+        num_demo_participants=2,
     ),
 ]
 
@@ -14,11 +14,11 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=1.00, participation_fee=2.10, doc=""
 )
 
-PARTICIPANT_FIELDS = []
-SESSION_FIELDS = []
+PARTICIPANT_FIELDS = ['tweets', 'finished']
+SESSION_FIELDS = ['prolific_completion_url']
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans
