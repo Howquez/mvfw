@@ -1,0 +1,40 @@
+---
+title: "Read Data"
+author: "Hauke Roggenkamp"
+format: html
+---
+
+```{r packages}
+pacman::p_load(magrittr, data.table, stringr)
+```
+
+```{r constants}
+STARTDATE <- as.Date("2022-03-23")
+ENDDATE   <- as.Date("2022-03-27")
+```
+
+# ScrapeHero
+
+```{r}
+sh <- data.table::fread('../data/queries/ScrapeHero/Tweets.csv')
+```
+
+# Snscrape
+
+```{r}
+sns <- data.table::fread('../data/queries/snscrape/mvfw metaverse fashion week_2022-02-23_2022-04-27.csv')
+```
+
+# Twint
+
+```{r readBatchesTiming}
+data_path    <- "../data/queries/Twint/timeFrames/"
+file_paths   <- fs::dir_ls(path = data_path, glob = "*.csv")
+object_names <- str_replace_all(string = file_paths,
+                                pattern = paste0(data_path, "|\\.csv"),
+                                replacement = "")
+datasets     <- purrr::map(file_paths, read.csv, sep = "\t")
+twint <- data.table::rbindlist(l = datasets)
+
+rm(list = c('data_path', 'file_paths', 'object_names', 'datasets'))
+```

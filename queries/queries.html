@@ -165,13 +165,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-11"><a href="#cb3-11"></a>tweets_df <span class="op">=</span> pd.DataFrame(tweets_list, columns<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>,</span>
 <span id="cb3-12"><a href="#cb3-12"></a><span class="st">'Likes'</span>, <span class="st">'Retweets'</span>, <span class="st">'Replies'</span>, <span class="st">'Language'</span>, <span class="st">'Media'</span>, <span class="st">'Username'</span>, <span class="st">'User Description'</span>, <span class="st">'User Image'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># drop duplicates</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>temp <span class="op">=</span> tweets_df.drop_duplicates(subset<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>], keep<span class="op">=</span><span class="st">'first'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a>english_tweets <span class="op">=</span> temp[temp[<span class="st">"Language"</span>] <span class="op">==</span> <span class="st">'en'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="write-data" class="level2">
 <h2 class="anchored" data-anchor-id="write-data">Write Data</h2>
 <p>Having scraped the data, I store it as a <code>.csv</code> file using the parameters defined above as a naming convention.</p>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="bu">file</span> <span class="op">=</span> <span class="st">'../data/queries/2023-01/</span><span class="sc">{keywords}</span><span class="st">_</span><span class="sc">{start}</span><span class="st">_</span><span class="sc">{end}</span><span class="st">.csv'</span>.<span class="bu">format</span>(keywords<span class="op">=</span>keywords, start<span class="op">=</span>start, end<span class="op">=</span>end)</span>
-<span id="cb4-2"><a href="#cb4-2"></a>tweets_df.to_csv(<span class="bu">file</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="bu">file</span> <span class="op">=</span> <span class="st">'../data/queries/snscrape/</span><span class="sc">{keywords}</span><span class="st">_</span><span class="sc">{start}</span><span class="st">_</span><span class="sc">{end}</span><span class="st">.csv'</span>.<span class="bu">format</span>(keywords<span class="op">=</span>keywords, start<span class="op">=</span>start, end<span class="op">=</span>end)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>tweets_df.to_csv(<span class="bu">file</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -181,37 +186,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="parameters-1" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
 <p>To do so, one needs to define parameters in lists. As we are using to sets of kewords, the <code>keywords</code> object is of length 2. Similarly, we are using several time periods expressed in <code>time_frames</code>.</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>keywords <span class="op">=</span> [<span class="st">'mvfw'</span>, <span class="st">'metaverse fashion week'</span>]</span>
-<span id="cb5-2"><a href="#cb5-2"></a>time_frames <span class="op">=</span> [<span class="st">'2022-02-23'</span>, <span class="st">'2022-03-02'</span>, <span class="st">'2022-03-09'</span>, <span class="st">'2022-03-16'</span>, <span class="st">'2022-03-23'</span>, <span class="st">'2022-03-28'</span>, <span class="st">'2022-04-04'</span>, <span class="st">'2022-04-11'</span>, <span class="st">'2022-04-18'</span>, <span class="st">'2022-04-27'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>keywords <span class="op">=</span> [<span class="st">'mvfw'</span>, <span class="st">'metaverse fashion week'</span>]</span>
+<span id="cb6-2"><a href="#cb6-2"></a>time_frames <span class="op">=</span> [<span class="st">'2022-02-23'</span>, <span class="st">'2022-03-02'</span>, <span class="st">'2022-03-09'</span>, <span class="st">'2022-03-16'</span>, <span class="st">'2022-03-23'</span>, <span class="st">'2022-03-28'</span>, <span class="st">'2022-04-04'</span>, <span class="st">'2022-04-11'</span>, <span class="st">'2022-04-18'</span>, <span class="st">'2022-04-27'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="queries" class="level2">
 <h2 class="anchored" data-anchor-id="queries">Queries</h2>
 <p>We’ll use these lists to create loops. On the highest level, we loop with <code>k</code> over <code>keywords</code>. Subsequently, we loop with <code>t</code> over the <code>time_frames</code>. This nested loops creates the queries that are then passed into the querying loop that was described above already.</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Initiate list</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>tweets_list <span class="op">=</span> []</span>
-<span id="cb6-3"><a href="#cb6-3"></a></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># loop over keywords</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="cf">for</span> k <span class="kw">in</span> keywords:</span>
-<span id="cb6-6"><a href="#cb6-6"></a>  t <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a>  </span>
-<span id="cb6-8"><a href="#cb6-8"></a>  <span class="co"># loop over time frames to create queries for each period x set of kewords</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>  <span class="cf">while</span> t <span class="op">&lt;</span> <span class="bu">len</span>(time_frames)<span class="op">-</span><span class="dv">1</span>:</span>
-<span id="cb6-10"><a href="#cb6-10"></a>    query <span class="op">=</span> <span class="st">'</span><span class="sc">{keywords}</span><span class="st"> since:</span><span class="sc">{start}</span><span class="st"> until:</span><span class="sc">{end}</span><span class="st">'</span>.<span class="bu">format</span>(keywords<span class="op">=</span>k, start<span class="op">=</span>time_frames[t], end<span class="op">=</span>time_frames[t<span class="op">+</span><span class="dv">1</span>])</span>
-<span id="cb6-11"><a href="#cb6-11"></a>    <span class="bu">print</span>(query)</span>
-<span id="cb6-12"><a href="#cb6-12"></a>    </span>
-<span id="cb6-13"><a href="#cb6-13"></a>    <span class="co"># Use this query to scrape data</span></span>
-<span id="cb6-14"><a href="#cb6-14"></a>    <span class="cf">for</span> i,tweet <span class="kw">in</span> <span class="bu">enumerate</span>(sntwitter.TwitterSearchScraper(query).get_items()):</span>
-<span id="cb6-15"><a href="#cb6-15"></a>        <span class="cf">if</span> i<span class="op">&gt;</span><span class="dv">10000</span>:</span>
-<span id="cb6-16"><a href="#cb6-16"></a>            <span class="cf">break</span></span>
-<span id="cb6-17"><a href="#cb6-17"></a>        tweets_list.append([tweet.date, tweet.conversationId, tweet.<span class="bu">id</span>, tweet.content, tweet.likeCount, tweet.retweetCount, tweet.replyCount, tweet.lang, tweet.media, tweet.user.username, tweet.user.description, tweet.user.profileImageUrl])</span>
-<span id="cb6-18"><a href="#cb6-18"></a>    t <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb6-19"><a href="#cb6-19"></a>    </span>
-<span id="cb6-20"><a href="#cb6-20"></a><span class="co"># create a dataframe from the tweets list above </span></span>
-<span id="cb6-21"><a href="#cb6-21"></a>tweets_df <span class="op">=</span> pd.DataFrame(tweets_list, columns<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>,</span>
-<span id="cb6-22"><a href="#cb6-22"></a><span class="st">'Likes'</span>, <span class="st">'Retweets'</span>, <span class="st">'Replies'</span>, <span class="st">'Language'</span>, <span class="st">'Media'</span>, <span class="st">'Username'</span>, <span class="st">'User Description'</span>, <span class="st">'User Image'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Initiate list</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>tweets_list <span class="op">=</span> []</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># loop over keywords</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="cf">for</span> k <span class="kw">in</span> keywords:</span>
+<span id="cb7-6"><a href="#cb7-6"></a>  t <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>  </span>
+<span id="cb7-8"><a href="#cb7-8"></a>  <span class="co"># loop over time frames to create queries for each period x set of kewords</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>  <span class="cf">while</span> t <span class="op">&lt;</span> <span class="bu">len</span>(time_frames)<span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb7-10"><a href="#cb7-10"></a>    query <span class="op">=</span> <span class="st">'</span><span class="sc">{keywords}</span><span class="st"> since:</span><span class="sc">{start}</span><span class="st"> until:</span><span class="sc">{end}</span><span class="st">'</span>.<span class="bu">format</span>(keywords<span class="op">=</span>k, start<span class="op">=</span>time_frames[t], end<span class="op">=</span>time_frames[t<span class="op">+</span><span class="dv">1</span>])</span>
+<span id="cb7-11"><a href="#cb7-11"></a>    <span class="bu">print</span>(query)</span>
+<span id="cb7-12"><a href="#cb7-12"></a>    </span>
+<span id="cb7-13"><a href="#cb7-13"></a>    <span class="co"># Use this query to scrape data</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>    <span class="cf">for</span> i,tweet <span class="kw">in</span> <span class="bu">enumerate</span>(sntwitter.TwitterSearchScraper(query).get_items()):</span>
+<span id="cb7-15"><a href="#cb7-15"></a>        <span class="cf">if</span> i<span class="op">&gt;</span><span class="dv">10000</span>:</span>
+<span id="cb7-16"><a href="#cb7-16"></a>            <span class="cf">break</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>        tweets_list.append([tweet.date, tweet.conversationId, tweet.<span class="bu">id</span>, tweet.content, tweet.likeCount, tweet.retweetCount, tweet.replyCount, tweet.lang, tweet.media, tweet.user.username, tweet.user.description, tweet.user.profileImageUrl, tweet.user.followersCount, tweet.user.friendsCount])</span>
+<span id="cb7-18"><a href="#cb7-18"></a>    t <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20"></a><span class="co"># create a dataframe from the tweets list above </span></span>
+<span id="cb7-21"><a href="#cb7-21"></a>tweets_df <span class="op">=</span> pd.DataFrame(tweets_list, columns<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>,</span>
+<span id="cb7-22"><a href="#cb7-22"></a><span class="st">'Likes'</span>, <span class="st">'Retweets'</span>, <span class="st">'Replies'</span>, <span class="st">'Language'</span>, <span class="st">'Media'</span>, <span class="st">'Username'</span>, <span class="st">'User Description'</span>, <span class="st">'User Image'</span>, <span class="st">'Followers'</span>, <span class="st">'Friends'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mvfw since:2022-02-23 until:2022-03-02</code></pre>
 </div>
@@ -267,18 +272,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>metaverse fashion week since:2022-04-18 until:2022-04-27</code></pre>
 </div>
 </div>
-<p>Now, we de-duplicate the resulting <code>tweets_df</code> and filter english tweets.</p>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># drop duplicates</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>temp <span class="op">=</span> tweets_df.drop_duplicates(subset<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>], keep<span class="op">=</span><span class="st">'first'</span>)</span>
-<span id="cb25-3"><a href="#cb25-3"></a>english_tweets <span class="op">=</span> temp[temp[<span class="st">"Language"</span>] <span class="op">==</span> <span class="st">'en'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, we de-duplicate the resulting <code>tweets_df</code> and filter English tweets.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># drop duplicates</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>temp <span class="op">=</span> tweets_df.drop_duplicates(subset<span class="op">=</span>[<span class="st">'Datetime'</span>, <span class="st">'Conversation ID'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Text'</span>], keep<span class="op">=</span><span class="st">'first'</span>)</span>
+<span id="cb26-3"><a href="#cb26-3"></a>english_tweets <span class="op">=</span> temp[temp[<span class="st">"Language"</span>] <span class="op">==</span> <span class="st">'en'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="write-data-1" class="level2">
 <h2 class="anchored" data-anchor-id="write-data-1">Write Data</h2>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="bu">file</span> <span class="op">=</span> <span class="st">'../data/queries/2023-01/mvfw metaverse fashion week_2022-02-23_2022-04-27.csv'</span></span>
-<span id="cb26-2"><a href="#cb26-2"></a>english_tweets.to_csv(<span class="bu">file</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a><span class="bu">file</span> <span class="op">=</span> <span class="st">'../data/queries/snscrape/mvfw metaverse fashion week_2022-02-23_2022-04-27.csv'</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a>english_tweets.to_csv(<span class="bu">file</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -287,7 +292,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>I took a considerable amount of inspiration from this post.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>I took a considerable amount of inspiration from this <a href="https://github.com/MartinBeckUT/TwitterScraper/blob/master/snscrape/python-wrapper/snscrape-python-wrapper.ipynb">post</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>This means that not all data that is available is scraped because of certain technological limits.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
