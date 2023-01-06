@@ -252,25 +252,25 @@ class Player(BasePlayer):
         ])
 
 # Interest in Fashion
-    fashion_interest_1 = models.BooleanField(
+    fashion_interest_1 = models.IntegerField(
         label='I am usually the first to know the latest fashion trends.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    fashion_interest_2 = models.BooleanField(
+    fashion_interest_2 = models.IntegerField(
         label='I read the fashion news regularly and try to keep my wardrobe up-to-date with fashion trends.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    fashion_interest_3 = models.BooleanField(
+    fashion_interest_3 = models.IntegerField(
         label='My friends regard me as a good source of fashion advice.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    fashion_interest_4 = models.BooleanField(
+    fashion_interest_4 = models.IntegerField(
         label='I usually try to be different from others by wearing fashionable clothing.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],

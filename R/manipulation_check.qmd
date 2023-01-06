@@ -1,0 +1,133 @@
+---
+title: "Untitled"
+format: html
+---
+
+```{r packages}
+# install.packages("pacman")
+pacman::p_load(magrittr, data.table, stringr, lubridate, # overviewR,
+               ggplot2, ggtern, MetBrewer, knitr, fs, purrr,
+               stargazer)
+```
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                plot.caption = element_text(colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+# colors <- met.brewer(name="Tam",n=7,product="discrete")
+cPrimary = "#00802F"
+cSecondary = "#EB6969"
+cInfo = "#FFF04B"
+cDanger <- "#EB6969"
+```
+
+```{r read_data}
+tmp <- read.csv(file = '../data/manipulation/all_apps_wide-2022-11-30.csv') %>% data.table()
+```
+
+```{r subset}
+evaluations <- c('participant.code',
+                 'feed.1.player.treatment',
+                 names(tmp) %>% str_subset(pattern = "feed.1.player.*\\d"))
+evaluations <- str_subset(string = evaluations, pattern = '\\D0$', negate = TRUE)
+data <- tmp[feed.1.player.completed_survey == TRUE, ..evaluations]
+```
+
+```{r renameCols}
+# rename columns
+names(data) %>% 
+        str_replace_all(pattern = "feed.1.player.", replacement = "") %>%
+        str_replace_all(pattern = "\\.(player|subsession|group)", replacement = "") %>%
+        str_replace_all(pattern = "\\._?", replacement = "_") %>%
+        setnames(x = data, old = names(data))
+```
+
+```{r melt}
+#| warning: false
+long <- melt(data, 
+             id.vars = c('participant_code'), 
+             measure.vars = patterns('\\d+$'), 
+             variable.name='item_tweet', 
+             value.name='rating')
+
+```
+
+```{r new_vars}
+long[, item := str_replace_all(string = item_tweet, pattern = '\\d*', replacement = '')]
+long[, tweet := str_replace_all(string = item_tweet, pattern = '\\D*', replacement = '')]
+
+long[str_detect(string = item_tweet,
+                pattern = '[12345]$'),
+     source := 'brands']
+long[str_detect(string = item_tweet,
+                pattern = '[67890]$'),
+     source := 'web3']
+long[str_detect(string = item_tweet,
+                pattern = '\\D0$'),
+     source := 'brands']
+```
+
+```{r condense}
+medium <- long[, 
+               .(rating = mean(rating, na.rm = TRUE)), 
+               by = c('item', 'source', 'tweet')]
+```
+
+```{r}
+medium[, .(mean_rating = mean(rating, na.rm = TRUE) %>% round(digits = 2)), by = c('item', 'source')] %>% kable()
+```
+
+
+```{r}
+#| results: asis
+affective <- lm(formula = rating ~ source, data = medium[item == 'affective'])
+fashion   <- lm(formula = rating ~ source, data = medium[item == 'fashion'])
+urgent    <- lm(formula = rating ~ source, data = medium[item == 'urgent'])
+financial <- lm(formula = rating ~ source, data = medium[item == 'financial'])
+
+stargazer(affective, fashion, urgent, financial,
+          header=FALSE,
+          type = "html", 
+          covariate.labels = c('web3 tweets'),
+          digits = 2, 
+          omit.stat = c("adj.rsq", "f"),
+          object.names = TRUE,
+          model.numbers = FALSE)
+```
+
+```{r}
+#| results: asis
+#| eval: false
+affective <- lm(formula = rating ~ source, data = long[item == 'affective'])
+fashion   <- lm(formula = rating ~ source, data = long[item == 'fashion'])
+urgent    <- lm(formula = rating ~ source, data = long[item == 'urgent'])
+financial <- lm(formula = rating ~ source, data = long[item == 'financial'])
+
+stargazer(affective, fashion, urgent, financial,
+          header=FALSE,
+          type = "html", 
+          digits = 2, 
+          omit.stat = c("adj.rsq", "f"),
+          object.names = TRUE,
+          model.numbers = FALSE)
+```
+
+```{r}
+long[, .(mean_rating = mean(rating, na.rm = TRUE)), by = c('item', 'source', 'tweet')]
+```
+
+```{r write}
+write.csv(x = long,
+          file = '../data/processed/stimuli.csv')
+```
+

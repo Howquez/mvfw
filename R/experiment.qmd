@@ -1,0 +1,177 @@
+---
+title: "MVFW Experiment"
+format: html
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r packages}
+# install.packages("pacman")
+pacman::p_load(magrittr, data.table, stringr, lubridate, # overviewR,
+               ggplot2, ggtern, MetBrewer, knitr, fs, purrr,
+               stargazer)
+```
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                plot.caption = element_text(colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+# colors <- met.brewer(name="Tam",n=7,product="discrete")
+cPrimary = "#00802F"
+cSecondary = "#EB6969"
+cInfo = "#FFF04B"
+cDanger <- "#EB6969"
+```
+
+```{r read_data}
+tmp <- fread(file = '../data/experiment/all_apps_wide-2022-12-01.csv') %>% data.table()
+```
+
+```{r subset}
+relevant <- c('participant.code',
+              names(tmp) %>% str_subset(pattern = ".*1.player.")) %>%
+  str_subset(pattern='fashion_interest', negate = TRUE)
+
+data <- tmp[questionnaire.1.player.completed_survey == TRUE,
+            ..relevant]
+```
+
+```{r renameCols}
+# rename columns
+names(data) %>% 
+        str_replace_all(pattern = ".*1.player.", replacement = "") %>%
+        str_replace_all(pattern = "\\.(player|subsession|group)", replacement = "") %>%
+        str_replace_all(pattern = "\\._?", replacement = "_") %>%
+        setnames(x = data, old = names(data))
+```
+
+```{r create_averages}
+# brand equity
+data[, 
+     avg_brand_equity := (brand_equity_1 + brand_equity_2 + brand_equity_3 + brand_equity_4)/4]
+
+# brand clarity
+data[, 
+     avg_brand_clarity := (brand_clarity_1 + brand_clarity_2 + brand_clarity_3 + brand_clarity_4)/4]
+
+# risk
+data[, 
+     avg_risk := (risk_1 + risk_2 + risk_3 + risk_4 + risk_5)/5]
+
+# trust in brand('s products)
+data[, 
+     avg_trust := (trust_1 + trust_2 + trust_3 + trust_4)/4]
+
+# prestige
+data[, 
+     avg_prestige := (prestige_1 + prestige_2 + prestige_3)/3]
+
+# information pollution
+data[, pollution_2 := 8 - pollution_2_r] # reverse item
+data[,
+     avg_pollution := (pollution_1 + pollution_2 + pollution_3)/3]
+
+# persuasiveness
+data[, 
+     avg_persuasion := (persuasive_1 + persuasive_2 + persuasive_3 + persuasive_4)/4]
+```
+
+```{r mean_comparison}
+data[, 
+     .(brand_equity = mean(avg_brand_equity),
+       brand_clarity = mean(avg_brand_clarity),
+       pollution = mean(avg_pollution),
+       prestige = mean(avg_prestige),
+       trust = mean(avg_trust),
+       risk = mean(avg_risk),
+       persuasion = mean(avg_persuasion)),
+     by = treatment] %>%
+  kable(digits = 2)
+```
+
+```{r density_plot_wrapper}
+
+density_plot <- function(dt = data,
+                         var = 'avg_brand_equity'){
+  
+  # select and rename cols
+  cols <- c('treatment', var)
+  tmp <- data[, ..cols]
+  setnames(tmp, new = c('treatment', 'item'))
+  
+  # non-parametric test
+  rs <- wilcox.test(tmp[treatment == 'clean', item],
+                    tmp[treatment == 'polluted', item],
+                    exact = FALSE)$p.value %>% 
+  round(digits = 4) %>% 
+  formatC(format = "f", 
+          digits = 3)
+  
+  # plot title
+  naming <- var %>% 
+    str_replace_all(pattern = 'avg_',
+                    replacement = '') %>%
+    str_replace_all(pattern = '_',
+                    replacement = ' ') %>%
+    str_to_title()
+  
+  # plot
+  ggplot(data = tmp,
+         mapping = aes(x = item, fill = treatment, lty = treatment)) +
+    geom_density(alpha = 0.5) +
+  scale_x_continuous(limits = c(1, 7),
+                       expand = c(0, NA)) +
+  scale_y_continuous(limits = c(0, NA),
+                       expand = c(0, NA)) +
+  scale_fill_manual(values = c(cPrimary, cSecondary)) +
+  guides(lty = "none") +
+  geom_vline(xintercept = tmp[treatment == "clean", 
+                              mean(item)],
+             col = "#FFFFFF",
+             lty = 1) +
+    geom_vline(xintercept = tmp[treatment == "polluted", 
+                                mean(item)],
+             col = "#FFFFFF",
+             lty = 2) +
+    labs(title = "",
+         y = "", x = naming,
+         subtitle = paste0("Mann-Whitney p-value=", rs)) +
+  layout +
+  theme(legend.position = "top")
+}
+```
+
+```{r make_plots}
+density_plot(var = 'avg_brand_equity')
+density_plot(var = 'avg_brand_clarity')
+density_plot(var = 'avg_pollution')
+density_plot(var = 'avg_prestige')
+density_plot(var = 'avg_trust')
+density_plot(var = 'avg_risk')
+density_plot(var = 'avg_persuasion')
+```
+
+
+```{r linear_models}
+be1 <- lm(formula = avg_brand_equity ~ treatment, data = data)
+be2 <- lm(formula = avg_brand_equity ~ treatment + age + gender, data = data)
+be2 %>% summary()
+```
+
+
+```{r write}
+write.csv(x = data,
+          file = '../data/processed/mvfw_experiment.csv')
+```

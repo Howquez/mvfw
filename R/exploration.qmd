@@ -1,0 +1,198 @@
+```{r settings}
+options(stringsAsFactors = FALSE)
+invisible(Sys.setlocale(category = "LC_ALL", locale = "C"))
+set.seed(42)
+```
+
+```{r packages}
+# install.packages("pacman")
+pacman::p_load(pacman, magrittr, data.table, stringr, lubridate,
+               ggplot2, ggtern, MetBrewer, knitr, fs, purrr,
+               qdapRegex)
+p_load_gh('hrbrmstr/longurl')
+```
+
+```{r constants}
+STARTDATE <- as.Date("2022-03-23")
+ENDDATE   <- as.Date("2022-03-27")
+```
+
+```{r readBatchesTiming}
+data_path    <- "../data/timeFrames/"
+file_paths   <- fs::dir_ls(path = data_path, glob = "*.csv")
+object_names <- str_replace_all(string = file_paths,
+                                pattern = paste0(data_path, "|\\.csv"),
+                                replacement = "")
+datasets     <- purrr::map(file_paths, read.csv, sep = "\t")
+tmp <- data.table::rbindlist(l = datasets)
+```
+
+```{r readBatchesBrands}
+data_path   <- "../data/brands/"
+file_paths  <- fs::dir_ls(path = data_path, glob = "*.csv")
+datasets    <- purrr::map(file_paths, read.csv, sep = "\t")
+brands <- data.table::rbindlist(l = datasets)
+```
+
+```{r combineData}
+temp <- data.table::rbindlist(l = list(tmp, brands))
+setorder(temp, -date)
+```
+
+```{r classify_stakeholders}
+temp[str_detect(string = username,
+                pattern = "nfts?|crypt|krypt|meta|block|coin|boson"),
+     `:=`(type = 'crypto marketer')]
+
+temp[str_detect(string = username,
+                pattern = "fashion|beauty|luxury"),
+     `:=`(type = 'fashion influencer')]
+```
+
+```{r search_spam}
+temp[str_detect(string = tweet, pattern = '\\$'), .(name, username, tweet)] %>% View()
+```
+
+```{r readBatchesBrands}
+data_path   <- "../data/brands/"
+file_paths  <- fs::dir_ls(path = data_path, glob = "*.csv")
+datasets    <- purrr::map(file_paths, read.csv, sep = "\t")
+brands <- data.table::rbindlist(l = datasets)
+```
+
+```{r saveSampleOtree}
+
+
+write.csv2(x = temp[str_detect(string = tweet, pattern = '\\$'), 
+                                      .(created_at, date,
+                                        name, username, link,
+                                        tweet, replies_count, retweets_count, likes_count,
+                                        photos)],
+           file = '../otree/feed/static/tweets/spam_tweets.csv')
+
+write.csv2(x = brands,
+           file = '../otree/feed/static/tweets/brands_tweets_2.csv')
+
+
+# Create a sample mentioning tommy
+write.csv2(x = temp[language == "en"][str_detect(string = tweet, pattern = 'Tommy|tommy'), 
+                                      .(created_at, date,
+                                        name, username, link,
+                                        tweet, replies_count, retweets_count, likes_count,
+                                        photos)],
+           file = '../otree/feed/static/tweets/sample_tweets.csv')
+
+# create a random sample of crypto marketers' posts
+write.csv2(x = temp[language == "en" & type == 'crypto marketer'][sample(.N, 150), .(created_at, date,
+                                                        name, username, link,
+                                                        tweet, replies_count, retweets_count, likes_count,
+                                                        photos)],
+           file = '../otree/feed/static/tweets/sample_tweets.csv')
+
+# create a random sample of crypto marketers' posts
+write.csv2(x = temp[language == "en" & type == 'fashion influencer', .(created_at, date,
+                                                        name, username, link,
+                                                        tweet, replies_count, retweets_count, likes_count,
+                                                        photos)],
+           file = '../otree/feed/static/tweets/sample_tweets.csv')
+
+# Create a random sample
+write.csv2(x = temp[language == "en"][sample(.N, 150), .(created_at, date,
+                                                        name, username, link,
+                                                        tweet, replies_count, retweets_count, likes_count,
+                                                        photos)],
+           file = '../otree/feed/static/tweets/sample_tweets.csv')
+```
+
+```{r transformData, warning = FALSE}
+# String clean up 
+temp[, raw:= tweet]
+temp[, tweet := iconv(tweet, "latin1", "ASCII", sub = "")]
+temp[, tweet := rm_url(tweet,                    # remove URLs
+                      pattern = pastex("@rm_twitter_url", "@rm_url"))]
+
+x <- temp[, tweet] %>% plyr::count() %>% data.table() %>% setorder( -freq) %>% head(n = 10)
+
+temp[tweet == '#MVFW #dzzit', .(username, created_at, raw)] %>% head(30)
+temp[tweet == '#MVFW #dzzit', unique(conversation_id)] %>% length()
+temp[tweet == '#MVFW #dzzit', unique(user_id)] %>% length()
+temp[tweet == '#MVFW #dzzit', unique(id)] %>% length()
+
+temp['username' =='btctn']
+
+View(temp[tweet == '#MVFW #dzzit'])
+
+temp[, characters := nchar(tweet)]
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+
+temp[, Mode(characters)]
+ggplot(data = temp, mapping = aes(x = characters)) + geom_histogram()
+
+```
+
+
+```{r identify_real_spam}
+# temp[, tweet] %>% plyr::count()
+
+temp[str_to_lower(string = tweet) %>%
+       str_detect(pattern = 'dizzit|dazzle|razzle'), 
+     .(users = length(unique(username)),
+       tweets = .N, 
+       likes = sum(likes_count, na.rm = FALSE))]
+```
+
+```{r}
+# subset english sample of UNIQUE tweets
+data <- temp[language == "en"] %>% unique(by = "tweet")
+
+# create distinc ID
+data[, doc_id := .I]
+
+# change date & time format
+data[, created_at := str_sub(string = created_at,
+                           start  = 1,
+                           end    = 19) %>% ymd_hms()]
+data[, date := ymd(date)]
+
+# store mentions (@....)
+data[, customMentions := str_extract_all(string = tweet,
+                                       pattern = "@\\S+")]
+data[customMentions == "character(0)", 
+   customMentions := NA]
+data[, nMentions := str_count(string = customMentions, pattern = "@")]
+```
+
+
+```{r addTimings}
+data[, timing := "after"]
+data[date <= ENDDATE, timing := "during"]
+data[date < STARTDATE, timing := "before"]
+
+data[, timing := factor(timing,
+                        ordered = TRUE,
+                        levels  = c("before", "during", "after"))]
+```
+
+
+```{r}
+#| eval: false
+load('../data/processed/mvfw.RData')
+write.csv2(x = data[product == "content" & domain == 'web3'][sample(.N, 150), 
+                                                            .(created_at, date,
+                                                              name, username, link,
+                                                              tweet, replies_count, retweets_count, likes_count,
+                                                              photos)],
+           file = '../otree/feed/static/tweets/sample_tweets.csv')
+```
+
+
+```{r get_urls}
+
+data
+```
+

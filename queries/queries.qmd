@@ -1,0 +1,127 @@
+---
+title: "Query Twitter Data"
+format: 
+  html:
+    code-line-numbers: true
+    # code-block-border-left: "#00802F"
+jupyter: python3
+---
+
+# Scope
+
+This document uses snscrape's Python wrapper to scrape twitter data that relates to the _Metaverse Fashion Week_ (or #MVFW for short).
+
+# Requirements
+
+This requires two modules: `snscrape` and `pandas`.
+
+```{python modules}
+import snscrape.modules.twitter as sntwitter
+import pandas as pd
+```
+
+# General Idea
+
+This section desribes how to scrape data using a singe query. 
+
+## Parameters
+
+To query the data, one needs to define some parameters defining the time frame (`start` and `end`) as well as the search terms (e.g. `mvfw` or `metaverse` and `fashion` and `week`).
+
+```{python define_query}
+#| eval: false
+start = '2022-02-23'
+end = '2022-04-27'
+keywords = 'mvfw' # 'metaverse fashion week'
+query = '{keywords} since:{start} until:{end}'.format(keywords=keywords, start=start, end=end)
+```
+
+## Query
+
+Having defined the parameters, I^[I took a considerable amount of inspiration from this post.] initiate an empty list called `tweets_list` which is then appended in a for loop that breaks after `10000` iterations.
+
+In this loop, I specify the required columns in line 8 and the respective column names in line 11.
+
+```{python run_query}
+#| eval: false
+# Creating list to append tweet data to
+tweets_list = []
+
+# Using TwitterSearchScraper to scrape data and append tweets to list
+for i,tweet in enumerate(sntwitter.TwitterSearchScraper(query).get_items()):
+    if i>10000:
+        break
+    tweets_list.append([tweet.date, tweet.conversationId, tweet.id, tweet.content, tweet.likeCount, tweet.retweetCount, tweet.replyCount, tweet.lang, tweet.media, tweet.user.username, tweet.user.description, tweet.user.profileImageUrl])
+    
+# Creating a dataframe from the tweets list above 
+tweets_df = pd.DataFrame(tweets_list, columns=['Datetime', 'Conversation ID', 'Tweet ID', 'Text',
+'Likes', 'Retweets', 'Replies', 'Language', 'Media', 'Username', 'User Description', 'User Image'])
+```
+
+## Write Data
+
+Having scraped the data, I store it as a `.csv` file using the parameters defined above as a naming convention.
+
+```{python write_csv}
+#| eval: false
+file = '../data/queries/2023-01/{keywords}_{start}_{end}.csv'.format(keywords=keywords, start=start, end=end)
+tweets_df.to_csv(file, index=False)
+```
+
+
+# Iterative Queries
+
+Because such a query may run into sampling issues^[This means that not all data that is available is scraped because of certain technological limits.], one should also try to run multiple queries over shorter, consecutive time periods and combine the resulting data sets subsequently.
+
+## Parameters
+
+To do so, one needs to define parameters in lists. As we are using to sets of kewords, the `keywords` object is of length 2. Similarly, we are using several time periods expressed in `time_frames`.
+
+```{python define_parameters}
+keywords = ['mvfw', 'metaverse fashion week']
+time_frames = ['2022-02-23', '2022-03-02', '2022-03-09', '2022-03-16', '2022-03-23', '2022-03-28', '2022-04-04', '2022-04-11', '2022-04-18', '2022-04-27']
+```
+
+## Queries
+
+We'll use these lists to create loops. On the highest level, we loop with `k` over `keywords`. Subsequently, we loop with `t` over the `time_frames`. This nested loops creates the queries that are then passed into the querying loop that was described above already.
+
+```{python run_queries}
+# Initiate list
+tweets_list = []
+
+# loop over keywords
+for k in keywords:
+  t = 0
+  
+  # loop over time frames to create queries for each period x set of kewords
+  while t < len(time_frames)-1:
+    query = '{keywords} since:{start} until:{end}'.format(keywords=k, start=time_frames[t], end=time_frames[t+1])
+    print(query)
+    
+    # Use this query to scrape data
+    for i,tweet in enumerate(sntwitter.TwitterSearchScraper(query).get_items()):
+        if i>10000:
+            break
+        tweets_list.append([tweet.date, tweet.conversationId, tweet.id, tweet.content, tweet.likeCount, tweet.retweetCount, tweet.replyCount, tweet.lang, tweet.media, tweet.user.username, tweet.user.description, tweet.user.profileImageUrl])
+    t += 1
+    
+# create a dataframe from the tweets list above 
+tweets_df = pd.DataFrame(tweets_list, columns=['Datetime', 'Conversation ID', 'Tweet ID', 'Text',
+'Likes', 'Retweets', 'Replies', 'Language', 'Media', 'Username', 'User Description', 'User Image'])
+```
+
+Now, we de-duplicate the resulting `tweets_df` and filter english tweets.
+
+```{python subset}
+# drop duplicates
+temp = tweets_df.drop_duplicates(subset=['Datetime', 'Conversation ID', 'Tweet ID', 'Text'], keep='first')
+english_tweets = temp[temp["Language"] == 'en']
+```
+
+## Write Data
+
+```{python write_csv_2}
+file = '../data/queries/2023-01/mvfw metaverse fashion week_2022-02-23_2022-04-27.csv'
+english_tweets.to_csv(file, index=False)
+```

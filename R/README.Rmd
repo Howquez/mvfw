@@ -140,6 +140,7 @@ temp <- data.table::rbindlist(l = list(tmp, brands))
 
 ```{r transformData, warning = FALSE}
 # String clean up 
+temp[, raw := tweet]
 temp[, tweet := iconv(tweet, "latin1", "ASCII", sub = "")]
 temp[, tweet := rm_url(tweet,                    # remove URLs
                       pattern = pastex("@rm_twitter_url", "@rm_url"))]
@@ -268,6 +269,7 @@ data[username %in% c("decentraland", "bosonprotocol", "exclusible", "threedium",
 data <- data[,
              .(doc_id,
                text = tweet,
+               tweet = raw,
                username,
                domain,
                product,
@@ -277,6 +279,7 @@ data <- data[,
                replies_count,
                retweets_count,
                likes_count,
+               link,
                mentions,
                customMentions,
                nMentions,
