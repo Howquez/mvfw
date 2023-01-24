@@ -5,6 +5,11 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+// enable html
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 console.log("popovers ready!")
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')

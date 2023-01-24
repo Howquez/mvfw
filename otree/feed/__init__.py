@@ -97,7 +97,8 @@ class B_Instructions(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         # read data
-        fashion = pd.read_csv('feed/static/tweets/brands_tweets.csv', sep=';')
+        # fashion = pd.read_csv('feed/static/tweets/brands_tweets.csv', sep=';')
+        fashion = pd.read_csv('feed/static/tweets/zegna_tweets.csv', sep=';')
         web3 = pd.read_csv('feed/static/tweets/spam_tweets.csv', sep=';')
 
         # shuffle
@@ -113,38 +114,41 @@ class B_Instructions(Page):
         tweets = tweets.sample(frac=1)
 
         # reformat date
-        tweets['created_at'] = pd.to_datetime(tweets['created_at'], errors='coerce')
-        tweets.date = tweets['created_at'].dt.strftime('%d %b')
+        tweets['datetime'] = pd.to_datetime(tweets['datetime'], errors='coerce')
+        tweets.date = tweets['datetime'].dt.strftime('%d %b').str.replace(' ', '. ')
         tweets['date'] = tweets['date'].str.replace('^0', '', regex=True)
 
         # highlight hashtags, cashtags, mentions, etc.
         tweets['tweet'] = tweets['tweet'].str.replace(r'\B(\#[a-zA-Z0-9_]+\b)',
                                                       r'<span class="text-primary">\g<0></span>', regex=True)
-        tweets['tweet'] = tweets['tweet'].str.replace(r'\B(\$[a-zA-Z0-9_]+\b)',
+        tweets['tweet'] = tweets['tweet'].str.replace(r'\B(\$[a-zA-Z0-9_\.]+\b)',
                                                       r'<span class="text-primary">\g<0></span>', regex=True)
         tweets['tweet'] = tweets['tweet'].str.replace(r'\B(\@[a-zA-Z0-9_]+\b)',
                                                       r'<span class="text-primary">\g<0></span>', regex=True)
         # remove the href below, if you don't want them to leave your page
         tweets['tweet'] = tweets['tweet'].str.replace(
             r'(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])',
-            #                                               r'<a class="text-primary" href="\g<0>" target="_blank">\g<0></a>', regex=True)
+            # r'<a class="text-primary" href="\g<0>" target="_blank">\g<0></a>', regex=True)
             r'<a class="text-primary">\g<0></a>', regex=True)
 
         # make numeric information integers and fill NAs with 0
-        tweets['replies_count'] = tweets['replies_count'].fillna(0).astype(int)
-        tweets['retweets_count'] = tweets['retweets_count'].fillna(0).astype(int)
-        tweets['likes_count'] = tweets['likes_count'].fillna(0).astype(int)
+        tweets['replies'] = tweets['replies'].fillna(0).astype(int)
+        tweets['retweets'] = tweets['retweets'].fillna(0).astype(int)
+        tweets['likes'] = tweets['likes'].fillna(0).astype(int)
 
         # make pictures (if any) visible
-        tweets['photos'] = tweets['photos'].str.replace("[", '')
-        tweets['photos'] = tweets['photos'].str.replace("'", '')
-        tweets['photos'] = tweets['photos'].str.replace("]", '')
-        tweets['photos'] = tweets['photos'].fillna('')
-        tweets['pic_available'] = np.where(tweets['photos'].str.match(pat='http'), True, False)
+        tweets['media'] = tweets['media'].str.replace("[", '')
+        tweets['media'] = tweets['media'].str.replace("'", '')
+        tweets['media'] = tweets['media'].str.replace("]", '')
+        tweets['media'] = tweets['media'].str.replace("and.*", '')
+        tweets['media'] = tweets['media'].fillna('')
+        tweets['pic_available'] = np.where(tweets['media'].str.match(pat='http'), True, False)
 
         # create a name icon as a profile pic
-        tweets['icon'] = tweets['name'].str[:2]
+        tweets['icon'] = tweets['username'].str[:2]
         tweets['icon'] = tweets['icon'].str.title()
+
+        tweets['user_followers'] = tweets['user_followers'].map('{:,.0f}'.format).str.replace(',', '.')
 
         # create form field stuff
         # tweets['fashion']   = 'fashion' + tweets['doc'].astype(str)

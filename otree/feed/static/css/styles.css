@@ -45,3 +45,9 @@
         text-align: center;
         font-weight: 100;
     }
+
+/*tooltips*/
+.custom-tooltip {
+  --bs-tooltip-bg: var(--bs-white);
+  --bs-tooltip-opacity: 100
+}
