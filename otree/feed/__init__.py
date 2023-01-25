@@ -113,6 +113,9 @@ class B_Instructions(Page):
         tweets = pd.concat([fashion, web3]).reset_index(drop=True)
         tweets = tweets.sample(frac=1)
 
+        # create ID
+        tweets['index'] = range(1, len(tweets) + 1)
+
         # reformat date
         tweets['datetime'] = pd.to_datetime(tweets['datetime'], errors='coerce')
         tweets.date = tweets['datetime'].dt.strftime('%d %b').str.replace(' ', '. ')
@@ -143,6 +146,10 @@ class B_Instructions(Page):
         tweets['media'] = tweets['media'].str.replace("and.*", '')
         tweets['media'] = tweets['media'].fillna('')
         tweets['pic_available'] = np.where(tweets['media'].str.match(pat='http'), True, False)
+
+        # make profile pictures (if any) visible
+        tweets['profile_pic_available'] = np.where(tweets['user_image'].isnull(), False, True)
+
 
         # create a name icon as a profile pic
         tweets['icon'] = tweets['username'].str[:2]
