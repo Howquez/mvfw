@@ -13,17 +13,24 @@
 
 
 {{ block content }}
-<body class="bg-light.bg-gradient">
+<body class="bg-white.bg-gradient">
 
     <!-- Header -->
-    <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
+    <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm"
+         style="z-index:1; opacity:0.95">
         <i></i>
-        <h5 class="m-3 text-primary"><strong>#MVFW</strong></h5>
+
+        <div class="w-75 d-flex justify-content-center">
+            <input class="form-control m-2 rounded-5 text-dark"
+               type="text"
+               value="search: #mvfw OR zegna"
+               aria-label="readonly input example"
+               style="background-color:  #FFFFFF"
+               readonly>
+        </div>
+
         <div class="me-3" style="cursor: pointer;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16" data-bs-toggle="offcanvas" data-bs-target="#offcanvasInstructions" aria-controls="offcanvasInstructions" id="instructions_icon">
-                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-fingerprint d-lg-none" viewBox="0 0 16 16" data-bs-toggle="popover"
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle d-lg-none" viewBox="0 0 16 16" data-bs-toggle="popover"
                     data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems">
                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
               <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
@@ -31,6 +38,7 @@
         </div>
     </nav>
 
+<!-- Feed starts here -->
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-12 col-md-8 col-lg-6 p-0">
@@ -101,7 +109,9 @@
                                             <i class="bi bi-chat text-secondary">&nbsp;{{i.replies}}&emsp;</i>
                                             <i class="bi bi-arrow-repeat text-secondary">&nbsp;{{i.retweets}}&emsp;</i>
                                             <i class="bi bi-heart text-secondary">&nbsp;{{i.likes}}&emsp;</i>
-                                            <i class="bi bi-upload text-secondary"></i>
+                                            <a class="bi bi-upload text-secondary"
+                                               href="{{i.tweet_URL}}"
+                                               target="_blank"></a>
                                         </div>
                                     </div>
                                 </div>
@@ -222,7 +232,9 @@
                                             <i class="bi bi-chat text-secondary">&nbsp;{{i.replies}}&emsp;</i>
                                             <i class="bi bi-arrow-repeat text-secondary">&nbsp;{{i.retweets}}&emsp;</i>
                                             <i class="bi bi-heart text-secondary">&nbsp;{{i.likes}}&emsp;</i>
-                                            <i class="bi bi-upload text-secondary"></i>
+                                            <a class="bi bi-upload text-secondary"
+                                               href="{{i.tweet_URL}}"
+                                               target="_blank"></a>
                                         </div>
                                     </div>
                                 </div>

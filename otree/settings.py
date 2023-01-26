@@ -10,6 +10,11 @@ SESSION_CONFIGS = [
         name='Tweet_Evaluation',
         app_sequence=['individual_tweets', 'questionnaire'],
         num_demo_participants=2,
+    ),
+    dict(
+        name='Scrping_Tool',
+        app_sequence=['scraping_tool'],
+        num_demo_participants=1,
     )
 ]
 
