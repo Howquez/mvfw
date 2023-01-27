@@ -13,38 +13,92 @@
 
 
 {{ block content }}
-<body class="bg-white.bg-gradient">
+<body class="bg-light">
 
-    <!-- Header -->
-    <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm"
-         style="z-index:1; opacity:0.95">
-        <i></i>
-
-        <div class="w-75 d-flex justify-content-center">
-            <input class="form-control m-2 rounded-5 text-dark"
-               type="text"
-               value="search: #mvfw OR zegna"
-               aria-label="readonly input example"
-               style="background-color:  #FFFFFF"
-               readonly>
-        </div>
-
-        <div class="me-3" style="cursor: pointer;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle d-lg-none" viewBox="0 0 16 16" data-bs-toggle="popover"
-                    data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems">
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-            </svg>
-        </div>
-    </nav>
-
-<!-- Feed starts here -->
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row">
+            <div class="hidden-md-down col-lg-2 p-0">
+                <div class="" style="position: fixed">
+                    <h3 class="mt-3">
+                        <i class="bi bi-twitter text-primary"></i>
+                    </h3>
+
+                    <div class="btn-group-vertical">
+                        <button class="btn btn-light rounded-5 mt-5 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-house"></i> Home
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-dark" type="button" disabled>
+                            <i class="bi bi-hash"></i>
+                            <b>Explore</b>
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-bell"></i> Notifications
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-envelope"></i> Messages
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-bookmark"></i> Bookmarks
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-file-medical"></i> Lists
+                        </button>
+                        <button class="btn btn-light rounded-5 mt-3 text-start text-secondary" type="button" disabled>
+                            <i class="bi bi-person-circle"></i> Profile
+                        </button>
+
+                        <input class="btn btn-primary rounded-5 mt-5 mb-5" type="button" value="Tweet"
+                               data-bs-toggle="modal" data-bs-target="#tweetModal">
+                    </div>
+
+            <!-- User ID -->
+                    <div class="row text-secondary mt-5">
+                        <div class="col">
+                            <h1 class="text-end">
+                                <i class="bi bi-person-circle sticky-bottom" data-bs-toggle="popover"
+                                   data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems."></i>
+                            </h1>
+                        </div>
+                        <div class="col text-start">
+                            <small>
+                                Your ID:<br>
+                                <b class="text-dark">{{ participant.code }}</b>
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
             <div class="col-sm-12 col-md-8 col-lg-6 p-0">
-                <table class="table table-hover border-top border-start border-end p-0 m-0" id="tweet_table">
+<!-- Navbar -->
+                <nav class="navbar navbar-inverse m-0 p-0 sticky-top justify-content-between bg-white shadow-sm"
+                     style="opacity:0.95">
+                    <i></i>
+
+                    <div class="w-75 d-flex justify-content-center">
+                        <input class="form-control m-2 rounded-5 text-dark"
+                           type="text"
+                           value="search: #mvfw OR metaverse fashion week OR estrava"
+                           aria-label="readonly input example"
+                           style="background-color:  #FFFFFF"
+                           readonly>
+                    </div>
+
+                    <div class="me-3 text-secondary" style="cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                             viewBox="0 0 16 16" data-bs-toggle="popover"
+                             class="bi bi-person-circle d-lg-none"
+                             data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                        </svg>
+                    </div>
+                </nav>
+
+                <table class="table table-hover table-scroll border-start border-end p-0 m-0 bg-white" id="tweet_table" style="height: 200px">
                     <tbody>
-<!-- loop over the first 10 rows, paste an attention check and then loop over the remaining tweets -->
+<!-- loop over the first 10 rows, paste an
+     attention check and then loop over the remaining tweets -->
                         {{ for i in tweets.values() }}
                         {{ if i.index < 10 }}
                         <tr>
@@ -76,7 +130,7 @@
                                     <div class="col-9 me-0">
                                         <div class="card-body">
                                             <h5 class="card-title"></h5>
-                                            <h6 class="card-subtitle mb-2">
+                                            <h6 class="card-subtitle mb-2 mt-3">
                                                 <a style="cursor: pointer;"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-placement="bottom"
@@ -131,13 +185,20 @@
                                              data-bs-custom-class="custom-tooltip"
                                              title="<div class='text-start text-secondary'><b class='text-dark'>Hauke R.</b><br>
                                                     @howquez<br><br>
-                                                    Hi, my name is Hauke and I like to run experiments. <br><br><b class='text-dark'>42</b> Followers</div>">
+                                                    Hi, my name is Hauke and I like to eat pizza 🍕. <br><br><b class='text-dark'>42</b> Followers</div>">
                                     </div>
                                     <div class="col-9 me-0">
                                         <div class="card-body">
                                             <h5 class="card-title"></h5>
-                                            <h6 class="card-subtitle mb-2">
-                                                <a style="cursor: pointer;">
+                                            <h6 class="card-subtitle mb-2 mt-3">
+                                                <a style="cursor: pointer;"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="bottom"
+                                                   data-bs-html="true"
+                                                   data-bs-custom-class="custom-tooltip"
+                                                   title="<div class='text-start text-secondary'><b class='text-dark'>Hauke R.</b><br>
+                                                    @howquez<br><br>
+                                                    Hi, my name is Hauke and I like to eat pizza 🍕. <br><br><b class='text-dark'>42</b> Followers</div>">
                                                     Hauke R.
                                                 </a>
                                                 <small class="text-muted"> howquez &middot; 25. Jan. </small>
@@ -145,7 +206,8 @@
                                             </h6>
                                             <p class="card-text">
                                                 <small>
-                                                    Dear participant <code>{{participant.code}}</code>, please click on
+                                                    Dear participant <code>{{participant.code}}</code>, <br>
+                                                    please click on
                                                     the like button (i.e. the heart icon) to demonstrate your attentiveness in this survey.
                                                 </small>
                                             </p>
@@ -199,7 +261,7 @@
                                     <div class="col-9 me-0">
                                         <div class="card-body">
                                             <h5 class="card-title"></h5>
-                                            <h6 class="card-subtitle mb-2">
+                                            <h6 class="card-subtitle mb-2 mt-3">
                                                 <a style="cursor: pointer;"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-placement="bottom"
@@ -253,28 +315,41 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <!-- User ID -->
-    <div class="sticky-bottom d-none d-lg-block">
-        <div class="container text-secondary">
-            <div class="row justify-content-start">
-                <div class="col-1">
-                    <h1 class="text-end">
-                        <i class="bi bi-person-circle sticky-bottom" data-bs-toggle="popover"
-                           data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems."></i>
-                    </h1>
-                </div>
-                <div class="col-2 text-start">
-                    <small>
-                        Your ID:<br>
-                        <b class="text-dark">{{ participant.code }}</b>
-                    </small>
+            <div class="hidden-md-down col-lg-2 p-0">
+                <div style="position: fixed" class="h-100">
+                    <img src="https://raw.githubusercontent.com/Howquez/mvfw/main/otree/feed/static/img/flatiron.png" class="ms-3 h-100">
                 </div>
             </div>
         </div>
-        <br><br>
+    </div>
+
+    <!-- Tweet Modal -->
+    <div class="modal fade" id="tweetModal" tabindex="-1" aria-labelledby="tweetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-secondary">
+                        <div class="col-2">
+                            <h1 class="text-end">
+                                <i class="bi bi-person-circle sticky-bottom" data-bs-toggle="popover"
+                                   data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems."></i>
+                            </h1>
+                        </div>
+                        <div class="col">
+                                <textarea class="form-control border-light" id="tweet1" rows="4"
+                                          placeholder="Click here to write what's happening"></textarea>
+                            <!-- implement this https://stackoverflow.com/a/42853575 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary w-25 rounded-5">Tweet</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Instructions Offcanvas -->
