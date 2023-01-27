@@ -17,8 +17,10 @@
 
     <div class="container">
         <div class="row">
-            <div class="hidden-md-down col-lg-2 p-0">
-                <div class="" style="position: fixed">
+
+
+            <div class="d-none d-md-block col-md-3 p-0">
+                <div class="position-fixed">
                     <h3 class="mt-3">
                         <i class="bi bi-twitter text-primary"></i>
                     </h3>
@@ -70,30 +72,21 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-8 col-lg-6 p-0">
-<!-- Navbar -->
-                <nav class="navbar navbar-inverse m-0 p-0 sticky-top justify-content-between bg-white shadow-sm"
+                <!-- Navbar -->
+                <div class="d-flex m-0 p-0 sticky-top justify-content-center bg-white shadow-sm"
                      style="opacity:0.95">
-                    <i></i>
-
-                    <div class="w-75 d-flex justify-content-center">
-                        <input class="form-control m-2 rounded-5 text-dark"
+                        <input class="form-control m-3 rounded-5 text-dark"
                            type="text"
                            value="search: #mvfw OR metaverse fashion week OR estrava"
                            aria-label="readonly input example"
                            style="background-color:  #FFFFFF"
                            readonly>
-                    </div>
 
-                    <div class="me-3 text-secondary" style="cursor: pointer;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                             viewBox="0 0 16 16" data-bs-toggle="popover"
-                             class="bi bi-person-circle d-lg-none"
-                             data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems">
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                        </svg>
-                    </div>
-                </nav>
+                    <h1 class="mt-3 text-secondary d-md-none">
+                        <i class="bi bi-person-circle sticky-bottom" data-bs-toggle="popover"
+                           data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems."></i>
+                    </h1>
+                </div>
 
                 <table class="table table-hover table-scroll border-start border-end p-0 m-0 bg-white" id="tweet_table" style="height: 200px">
                     <tbody>
@@ -315,8 +308,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="hidden-md-down col-lg-2 p-0">
-                <div style="position: fixed" class="h-100">
+            <div class="d-none d-md-block col-lg-3 p-0">
+                <div class="position-fixed h-100">
                     <img src="https://raw.githubusercontent.com/Howquez/mvfw/main/otree/feed/static/img/flatiron.png" class="ms-3 h-100">
                 </div>
             </div>
