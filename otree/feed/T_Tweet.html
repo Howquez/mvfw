@@ -1,10 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<tr>
+    <td>
+        <div class="row justify-content-start">
+            <div class="col-2">
+                {{ if i.profile_pic_available == True}}
+                    <img src="{{i.user_image}}" class="card-img p1 ms-3 poster" alt="Profile picture of {{i.username}}."
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="bottom"
+                         data-bs-html="true"
+                         data-bs-custom-class="custom-tooltip"
+                         title="<div class='text-start text-secondary'><b class='text-dark'>{{i.username}}</b><br>
+                                @{{i.handle}}<br><br>
+                                {{i.user_description}} <br><br><b class='text-dark'>{{i.user_followers}}</b> Followers</div>">
+                {{ else }}
+                    <div class="poster p1 ms-3"
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="bottom"
+                         data-bs-html="true"
+                         data-bs-custom-class="custom-tooltip"
+                         title="<div class='text-start text-secondary'><b class='text-dark'>{{i.username}}</b><br>
+                                @{{i.handle}}<br><br>
+                                {{i.user_description}} <br><br><b class='text-dark'>{{i.user_followers}}</b> Followers</div>">
+                        <h4>{{i.icon}}</h4>
+                    </div>
+                {{ endif }}
+            </div>
+            <div class="col-9 me-0">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <h6 class="card-subtitle mb-2 mt-3">
+                        <a style="cursor: pointer;"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           data-bs-html="true"
+                           data-bs-custom-class="custom-tooltip"
+                           title="<div class='text-start text-secondary'><b class='text-dark'>{{i.username}}</b><br>
+                           @{{i.handle}}<br><br>
+                           {{i.user_description}} <br><br><b class='text-dark'>{{i.user_followers}}</b> Followers</div>">
+                            {{i.handle}}
+                        </a>
+                        <small class="text-muted"> {{i.username}} &middot; {{i.date}}.</small>
+                        <!--
+                        <a class="bi bi-link-45deg text-secondary"
+                           href="{{i.tweet_URL}}"
+                           target="_blank"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="right"
+                           title="View Source"></a>
+                         -->
+                    </h6>
+                    <p class="card-text">
+                        <small>{{i.tweet}}</small>
+                    </p>
+                </div>
+
+                {{ if i.pic_available == True}}
+                    <img src="{{i.media}}" class="card-img ps-0 mt-2 rounded-4" alt="...">
+                {{ endif }}
+                <div class="d-flex border-top-0 justify-content-around mt-3">
+                    <i class="bi bi-chat text-secondary">&nbsp;{{i.replies}}&emsp;</i>
+                    <i class="bi bi-arrow-repeat text-secondary">&nbsp;{{i.retweets}}&emsp;</i>
+                    <i class="bi bi-heart text-secondary">&nbsp;{{i.likes}}&emsp;</i>
+                    <a class="bi bi-upload text-secondary"
+                       href="{{i.tweet_URL}}"
+                       target="_blank"></a>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>

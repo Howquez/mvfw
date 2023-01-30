@@ -17,6 +17,8 @@ class C(BaseConstants):
 
     RULES_TEMPLATE = "feed/T_Rules.html"
     PRIVACY_TEMPLATE = "feed/T_Privacy.html"
+    TWEET_TEMPLATE = "feed/T_Tweet.html"
+    ATTENTION_TEMPLATE = "feed/T_Attention_Check.html"
     PAPERCUPS_TEMPLATE = __name__ + '/T_PAPERCUPS.html'
 
     TWEET_LENGTH = list(range(*{'start':0,'stop':41,'step':1}.values()))
@@ -171,7 +173,7 @@ class B_Instructions(Page):
         #     'description'] = "Hi, this is the author's profile information which needs to be populated with real information."
         player.participant.tweets = tweets
 
-class C_Tweets_Eval(Page):
+class C_Tweets(Page):
     form_model = "player"
 
     @staticmethod
@@ -197,7 +199,7 @@ class C_Tweets_Eval(Page):
         )
 
 
-class C_Tweets(Page):
+class C_Feed(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
@@ -205,4 +207,4 @@ class C_Tweets(Page):
         )
 
 page_sequence = [A_Intro, B_Instructions,
-                C_Tweets]
+                C_Feed]
