@@ -18,7 +18,7 @@ KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHAN
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 >
->The licensee undertakes to mention the names of the licensors (Felix Holzmeister and Armin Pfurtscheller) and to cite the following article in all publications in
+>The licensee undertakes to mention the names of the licensor (Hauke Roggenkamp) and to cite the following article in all publications in
 which results of experiments conducted with the Software are published: 
 > 
 > [Reference goes here]
