@@ -62,18 +62,18 @@
                         {{ include C.RULES_TEMPLATE }}
 
                         <p class="lead mb-0 mt-5">Help</p>
-                        <hr class="mt-0">
-                        <p class="text-muted">
+                        <hr class="mt-0 mb-1">
+                        <small class="text-muted">
                             A click on the
                             <i class="bi bi-person-circle" style="cursor: pointer;"
                                data-bs-toggle="popover"
                                data-bs-content="You have been asigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems">
                             </i>-icon provides your personal ID.
                             Please provide this ID if you run into technical problems and want to contact us.
-                        </p>
+                        </small>
 
                         <div class="d-flex justify-content-center mt-5 mb-3">
-                            <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                            <button class="btn btn-success shadow" type="submit" id="submitButton">
                                 Next
                             </button>
                         </div>

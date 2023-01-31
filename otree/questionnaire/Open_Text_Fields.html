@@ -18,22 +18,38 @@
 <body class="bg-light.bg-gradient">
 <img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
 
-
-    <div class="container">
+    <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-sm-10 col-md-10 col-lg-6">
                 <!-- Decision Card -->
                 <div class="card rounded mt-5 shadow-lg">
                     <div class="card-body">
                         <h4 class="mb-0">
-                            Consider the brand Estrava and the feed you have just seen.
+                            Consider the feed you have just seen.
                         </h4>
                         <small class="text-secondary">
-                            Please rate how well the following statements describe how you thought and felt while browsing
-                            the tweets.
+                            Please answer the following questions by writing a few sentences describing your thoughts.
                         </small>
 
-{{ include C.QUESTIONNAIRE_TEMPLATE }}
+                        <br><br>
+
+                        <p class="mt-3 mb-0">
+                            <small>
+                                What were the first thoughts and feelings that came to your mind when you were scrolling
+                                through the entire feed?
+                            </small>
+                        </p>
+                        {{ form.otf_1 }}
+
+                        <p class="mt-4 mb-0">
+                            <small>
+                                Please describe as detailed as you can your Twitter experience considering all tweets
+                                of the entire feed, given that you only wanted to find out Estrava’s recent updates.
+                                What did you like and dislike about your experience following the recent Estrava posts?
+                            </small>
+                        </p>
+                        {{ form.otf_2 }}
+
 
                         <div class="d-flex justify-content-center m-3">
                             <button class="btn btn-success shadow" type="submit" id="submitButton">

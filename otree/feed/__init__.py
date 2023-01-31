@@ -19,6 +19,7 @@ class C(BaseConstants):
     PRIVACY_TEMPLATE = "feed/T_Privacy.html"
     TWEET_TEMPLATE = "feed/T_Tweet.html"
     ATTENTION_TEMPLATE = "feed/T_Attention_Check.html"
+    TOPICS_TEMPLATE = "feed/T_Trending_Topics.html"
     PAPERCUPS_TEMPLATE = __name__ + '/T_PAPERCUPS.html'
 
     TWEET_LENGTH = list(range(*{'start':0,'stop':41,'step':1}.values()))

@@ -18,26 +18,25 @@
 <body class="bg-light.bg-gradient">
 <img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
 
-
+    <!-- Header -->
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-10 col-md-10 col-lg-6">
                 <!-- Decision Card -->
-                <div class="card rounded mt-3 shadow-lg">
+                <div class="card rounded mt-5 shadow-lg">
                     <div class="card-body">
-                        <h5 class="mb-0">
-                            Describe yourself.
-                        </h5>
+                        <h4 class="mb-0">
+                            Consider the brand Estrava and the feed you have just seen.
+                        </h4>
                         <small class="text-secondary">
-                            Please fill in the following forms.
+                            Please rate how well the following statements describe how you thought and felt while browsing
+                            the tweets.
                         </small>
 
-                        <small>
-                            {{ formfields }}
-                        </small>
+{{ include C.QUESTIONNAIRE_TEMPLATE }}
 
                         <div class="d-flex justify-content-center m-3">
-                            <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                            <button class="btn btn-success shadow" type="submit" id="submitButton">
                                 Submit
                             </button>
                         </div>
@@ -46,6 +45,5 @@
             </div>
         </div>
     </div>
-
+</body>
 {{ endblock }}
-
