@@ -1,4 +1,4 @@
-console.log("interactions button ready!");
+console.log("interactions ready!");
 
 // var likeButton = document.querySelector(".like-button");
 // var likeCount = document.querySelector(".like-count");
@@ -63,16 +63,19 @@ retweetButtons.forEach(function(retweetButton) {
 var likeButtons = document.querySelectorAll(".like-button");
 
 likeButtons.forEach(function(likeButton) {
+    var likeField = likeButton.querySelector(".like-field");
     var likeCount = likeButton.querySelector(".like-count");
     var likeIcon  = likeButton.querySelector(".like-icon");
 
     likeButton.addEventListener("click", function() {
       if (likeButton.classList.contains("liked")) {
         likeButton.classList.remove("liked");
+        likeField.value = 0;
         likeCount.textContent = (parseInt(likeCount.textContent) - 1).toString();
         likeIcon.className="bi bi-heart text-secondary like-icon";
     } else {
         likeButton.classList.add("liked");
+        likeField.value = 1;
         likeCount.textContent = (parseInt(likeCount.textContent) + 1).toString();
         likeIcon.className="bi bi-heart-fill text-danger like-icon";
     }

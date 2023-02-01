@@ -22,6 +22,7 @@ class C(BaseConstants):
     TOPICS_TEMPLATE = "feed/T_Trending_Topics.html"
     PAPERCUPS_TEMPLATE = __name__ + '/T_PAPERCUPS.html'
 
+    FEED_LENGTH = list(range(*{'start':0,'stop':41,'step':1}.values()))
     TWEET_LENGTH = list(range(*{'start':0,'stop':41,'step':1}.values()))
 
 
@@ -36,6 +37,11 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     treatment = models.StringField(doc='indicates the treatment a player is randomly assigned to')
     privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened.", blank=True)
+
+    # create like count fields
+    for i in C.FEED_LENGTH:
+        locals()['liked_item_' + str(i)] = models.BooleanField(initial=False, blank=True)
+    del i
 
     # # create affective fields
     # for i in C.TWEET_LENGTH:
@@ -201,6 +207,14 @@ class C_Tweets(Page):
 
 
 class C_Feed(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def get_form_fields(player: Player):
+        items = player.participant.tweets['doc_id'].values.tolist()
+        items.insert(0, 0)
+        return ['liked_item_' + str(n) for n in items]
+
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
