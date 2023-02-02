@@ -49,9 +49,9 @@
                     <img src="{{i.media}}" class="card-img ps-0 mt-2 rounded-4" alt="...">
                 {{ endif }}
                 <div class="d-flex border-top-0 mt-3 ms-5">
-                    <div class="reply-button col" data-bs-toggle="modal" data-bs-target="#replyModal" id="r_{{i.doc_id}}">
-                        <span class="bi bi-chat text-secondary reply-icon" style="cursor: pointer">️</span>
-                        <span class="reply-count text-secondary">{{i.replies}}</span>
+                    <div class="reply-button col" data-bs-toggle="modal" data-bs-target="#replyModal_{{i.doc_id}}" id="reply_button_{{i.doc_id}}">
+                        <span class="bi bi-chat text-secondary reply-icon" id="reply_icon_{{i.doc_id}}" style="cursor: pointer">️</span>
+                        <span class="reply-count text-secondary" id="reply_count_{{i.doc_id}}">{{i.replies}}</span>
                     </div>
                     <div class="retweet-button col">
                         <span class="bi bi-arrow-repeat text-secondary retweet-icon" style="cursor: pointer">️</span>
@@ -70,3 +70,36 @@
         </div>
     </td>
 </tr>
+
+<!-- Reply Modal -->
+<div class="modal fade reply-modal" id="replyModal_{{i.doc_id}}" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="replying-tweet mb-5 ms-3 ps-3 border-start border-primary border-3 text-secondary"
+                     id="replying_tweet_{{i.doc_id}}"></div>
+                <div class="row text-secondary">
+                    <div class="col-2">
+                        <h1 class="text-end">
+                            <i class="bi bi-person-circle sticky-bottom" data-bs-toggle="popover"
+                               data-bs-content="You have been assigned the following ID: {{ participant.code }}. Please use it to identify yourself if you encounter any problems."></i>
+                        </h1>
+                    </div>
+                    <div class="col">
+                            <textarea class="form-control border-light reply-field"
+                                      id="reply_to_item_{{i.doc_id}}" name="reply_to_item_{{i.doc_id}}"
+                                      rows="4" placeholder="Tweet your reply"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary w-25 rounded-5 reply-modal-button" id="reply_modal_button_{{i.doc_id}}"
+                        onclick="replyOneUp();"
+                        data-bs-dismiss="modal">Reply</button>
+            </div>
+        </div>
+    </div>
+</div>

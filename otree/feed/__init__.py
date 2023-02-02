@@ -43,6 +43,11 @@ class Player(BasePlayer):
         locals()['liked_item_' + str(i)] = models.BooleanField(initial=False, blank=True)
     del i
 
+    # create reply text fields
+    for i in C.FEED_LENGTH:
+        locals()['reply_to_item_' + str(i)] = models.LongStringField(blank=True)
+    del i
+
     # # create affective fields
     # for i in C.TWEET_LENGTH:
     #     locals()['affective' + str(i)] = models.IntegerField(
@@ -213,7 +218,8 @@ class C_Feed(Page):
     def get_form_fields(player: Player):
         items = player.participant.tweets['doc_id'].values.tolist()
         items.insert(0, 0)
-        return ['liked_item_' + str(n) for n in items]
+        return ['liked_item_' + str(n) for n in items] + \
+               ['reply_to_item_' + str(n) for n in items]
 
     @staticmethod
     def vars_for_template(player: Player):

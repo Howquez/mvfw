@@ -1,56 +1,38 @@
 console.log("interactions ready!");
 
-// var likeButton = document.querySelector(".like-button");
-// var likeCount = document.querySelector(".like-count");
-// var likeIcon = document.querySelector(".like-icon");
-
-// likeButton.addEventListener("click", function() {
-//     if (likeButton.classList.contains("liked")) {
-//         likeButton.classList.remove("liked");
-//         likeCount.textContent = (parseInt(likeCount.textContent) - 1).toString();
-//         likeIcon.className="bi bi-heart text-secondary like-icon";
-
-//     } else {
-//         likeButton.classList.add("liked");
-//         likeCount.textContent = (parseInt(likeCount.textContent) + 1).toString();
-//         likeIcon.className="bi bi-heart-fill text-danger like-icon";
-//     }
-// });
-
-
+// REPLIES
 var replyButtons = document.querySelectorAll(".reply-button");
-var replyModalButton = document.querySelector(".reply-modal-button")
+var ID;
+var replyModalButton;
 
 replyButtons.forEach(function(replyButton) {
-    var replyField = document.querySelector(".reply-field")
-    var replyingTweet = document.querySelector(".replying-tweet")
-
     replyButton.addEventListener("click", function() {
-        var ID = replyButton.id.match(/\d+/)[0]
-        replyModalButton.id="button_for_reply_to_" + ID
-        replyField.id="reply_to_item_" + ID
-        replyingTweet.innerHTML=document.getElementById("tweet_" + ID).innerHTML
+        ID = replyButton.id.match(/\d+/)[0]
+        replyModalButton = document.getElementById("reply_modal_button_" + ID);
+
+        var replyingTweet = document.getElementById("replying_tweet_" + ID);
+        replyingTweet.innerHTML=document.getElementById("tweet_" + ID).innerHTML;
     });
 });
 
-replyModalButton.addEventListener("click", function() {
-    var ID = "r_" + replyModalButton.id.match(/\d+/)[0]
-    var replyButton = document.getElementById(ID)
-    var replyCount = replyButton.querySelector(".reply-count");
-    var replyIcon  = replyButton.querySelector(".reply-icon");
+//replyModalButton.addEventListener("click", function() {
 
-    // if (replyButton.classList.contains("replied")) {
-        // replyButton.classList.remove("replied");
-        // replyCount.textContent = (parseInt(replyCount.textContent) - 1).toString();
-        // replyIcon.className="bi bi-chat text-secondary reply-icon";
-    // } else {
+function replyOneUp(){
+    var replyButton = document.getElementById("reply_button_" + ID);
+    var replyCount = document.getElementById("reply_count_" + ID);
+    var replyIcon  = document.getElementById("reply_icon_" + ID);
+
+    if (!replyButton.classList.contains("replied")){
         replyButton.classList.add("replied");
         replyCount.textContent = (parseInt(replyCount.textContent) + 1).toString();
         replyIcon.className="bi bi-chat-fill text-primary reply-icon";
-    // }
-});
+    };
+};
 
 
+
+
+// RETWEETS (Frontend only)
 var retweetButtons = document.querySelectorAll(".retweet-button");
 
 retweetButtons.forEach(function(retweetButton) {
@@ -73,6 +55,7 @@ retweetButtons.forEach(function(retweetButton) {
 });
 
 
+// LIKES
 var likeButtons = document.querySelectorAll(".like-button");
 
 likeButtons.forEach(function(likeButton) {
@@ -96,6 +79,8 @@ likeButtons.forEach(function(likeButton) {
 });
 
 
+
+// SHARES (Frontend only)
 var shareButtons = document.querySelectorAll(".share-button");
 
 shareButtons.forEach(function(shareButton) {
