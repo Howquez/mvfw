@@ -57,7 +57,7 @@
                         <span class="bi bi-arrow-repeat text-secondary retweet-icon" style="cursor: pointer">️</span>
                         <span class="retweet-count text-secondary">{{i.retweets}}</span>
                     </div>
-                    <div class="like-button col">
+                    <div class="like-button col" id="like_button_{{i.doc_id}}">
                         <span class="bi bi-heart text-secondary like-icon" style="cursor: pointer">️</span>
                         <span class="like-count text-secondary">{{i.likes}}</span>
                         <input class="like-field" type="hidden" name="liked_item_{{i.doc_id}}" id="liked_item_{{i.doc_id}}">

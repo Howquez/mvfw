@@ -74,6 +74,16 @@ likeButtons.forEach(function(likeButton) {
         likeField.value = 1;
         likeCount.textContent = (parseInt(likeCount.textContent) + 1).toString();
         likeIcon.className="bi bi-heart-fill text-danger like-icon";
+
+        if (likeButton.id == "attention_check") {
+            var redirect_button = document.getElementById("submitButton")
+            var submit_button = document.createElement("button")
+            submit_button.setAttribute("type", "submit")
+            submit_button.className = "btn btn-outline-success m-2"
+            submit_button.innerHTML = "Questionnaire"
+            redirect_button.parentNode.replaceChild(submit_button, redirect_button);
+            likeButton.id = "attention_checked";
+        }
     }
 });
 });

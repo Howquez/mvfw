@@ -40,14 +40,23 @@
                 <img src="https://images.unsplash.com/photo-1454944338482-a69bb95894af?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1473&q=80"
                      class="card-img ps-0 mt-2 rounded-4" alt="...">
 
-                <div class="d-flex border-top-0 justify-content-around mt-3">
-                    <i class="bi bi-chat text-secondary">&nbsp;0&emsp;</i>
-                    <i class="bi bi-arrow-repeat text-secondary">&nbsp;1&emsp;</i>
-                    <i class="bi bi-heart text-secondary"
-                       style="cursor: pointer;"
-                       onclick="like();"
-                       id="like_button">&nbsp;4&emsp;</i>
-                    <i class="bi bi-upload text-secondary"></i>
+                <div class="d-flex border-top-0 mt-3 ms-5">
+                    <div class="col" id="reply_button_attention">
+                        <span class="bi bi-chat text-secondary" style="cursor: pointer">️</span>
+                        <span class="reply-count text-secondary">0</span>
+                    </div>
+                    <div class="retweet-button col">
+                        <span class="bi bi-arrow-repeat text-secondary retweet-icon" style="cursor: pointer">️</span>
+                        <span class="retweet-count text-secondary">1</span>
+                    </div>
+                    <div class="like-button col" id="attention_check">
+                        <span class="bi bi-heart text-secondary like-icon" style="cursor: pointer">️</span>
+                        <span class="like-count text-secondary">4</span>
+                        <input class="like-field" type="hidden" name="liked_item_attention" id="liked_item_attention">
+                    </div>
+                    <div class="share-button col">
+                        <span class="bi bi-upload text-secondary share-icon" style="cursor: pointer">️</span>
+                    </div>
                 </div>
             </div>
         </div>
