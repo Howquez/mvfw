@@ -19,22 +19,35 @@ console.log("interactions ready!");
 
 
 var replyButtons = document.querySelectorAll(".reply-button");
+var replyModalButton = document.querySelector(".reply-modal-button")
 
 replyButtons.forEach(function(replyButton) {
+    var replyField = document.querySelector(".reply-field")
+    var replyingTweet = document.querySelector(".replying-tweet")
+
+    replyButton.addEventListener("click", function() {
+        var ID = replyButton.id.match(/\d+/)[0]
+        replyModalButton.id="button_for_reply_to_" + ID
+        replyField.id="reply_to_item_" + ID
+        replyingTweet.innerHTML=document.getElementById("tweet_" + ID).innerHTML
+    });
+});
+
+replyModalButton.addEventListener("click", function() {
+    var ID = "r_" + replyModalButton.id.match(/\d+/)[0]
+    var replyButton = document.getElementById(ID)
     var replyCount = replyButton.querySelector(".reply-count");
     var replyIcon  = replyButton.querySelector(".reply-icon");
 
-    replyButton.addEventListener("click", function() {
-      if (replyButton.classList.contains("replied")) {
-        replyButton.classList.remove("replied");
-        replyCount.textContent = (parseInt(replyCount.textContent) - 1).toString();
-        replyIcon.className="bi bi-chat text-secondary reply-icon";
-    } else {
+    // if (replyButton.classList.contains("replied")) {
+        // replyButton.classList.remove("replied");
+        // replyCount.textContent = (parseInt(replyCount.textContent) - 1).toString();
+        // replyIcon.className="bi bi-chat text-secondary reply-icon";
+    // } else {
         replyButton.classList.add("replied");
         replyCount.textContent = (parseInt(replyCount.textContent) + 1).toString();
         replyIcon.className="bi bi-chat-fill text-primary reply-icon";
-    }
-});
+    // }
 });
 
 

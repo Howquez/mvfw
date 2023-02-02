@@ -25,7 +25,7 @@
                 {{ endif }}
             </div>
             <div class="col-9 me-0">
-                <div class="card-body">
+                <div class="card-body" id="tweet_{{i.doc_id}}">
                     <h5 class="card-title"></h5>
                     <h6 class="card-subtitle mb-2 mt-3">
                         <a style="cursor: pointer;"
@@ -49,7 +49,7 @@
                     <img src="{{i.media}}" class="card-img ps-0 mt-2 rounded-4" alt="...">
                 {{ endif }}
                 <div class="d-flex border-top-0 mt-3 ms-5">
-                    <div class="reply-button col">
+                    <div class="reply-button col" data-bs-toggle="modal" data-bs-target="#replyModal" id="r_{{i.doc_id}}">
                         <span class="bi bi-chat text-secondary reply-icon" style="cursor: pointer">️</span>
                         <span class="reply-count text-secondary">{{i.replies}}</span>
                     </div>
