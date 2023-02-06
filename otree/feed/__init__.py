@@ -36,7 +36,20 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     treatment = models.StringField(doc='indicates the treatment a player is randomly assigned to')
-    privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened.", blank=True)
+    privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened", blank=True)
+    liked_item_attention = models.BooleanField(doc="indicates whether a participant passes the attention check", blank=True)
+
+    mc_1 = models.IntegerField(
+        label="Estrava is internationally recognized as a leading global luxury fashion brand.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    mc_2 = models.IntegerField(
+        label="I imagine myself to spend some spare time checking out Estrava's recent Twitter feed. ",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
 
     # create like count fields
     for i in C.FEED_LENGTH:
@@ -108,6 +121,9 @@ class A_Intro(Page):
 
 
 class B_Instructions(Page):
+    form_model = "player"
+    form_fields = ["mc_1", "mc_2"]
+
     @staticmethod
     def before_next_page(player, timeout_happened):
         # read data
@@ -187,6 +203,7 @@ class B_Instructions(Page):
 
 class C_Tweets(Page):
     form_model = "player"
+    form_fields = ['attention_check']
 
     @staticmethod
     def get_form_fields(player: Player):

@@ -61,6 +61,42 @@
 
                         {{ include C.RULES_TEMPLATE }}
 
+
+                        <br>
+                            Considering the information provided so far, please indicate to what extent you
+                            (dis)agree with the following statements.
+                        <table class="table mt-0 text-secondary">
+                            <colgroup>
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                            </colgroup>
+                            <tr>
+                                <td>
+                                </td>
+                                <td colspan="3"><small>I fully<br>disagree</small></td>
+                                <td></td>
+                                <td colspan="3" class="text-end"><small>I fully<br>agree</small></td>
+                            </tr>
+                            {{ for field in form }}
+                                <tr>
+                                    <td>
+                                        <small>{{ field.label }}</small>
+                                    </td>
+                                    {{ for choice in field }}
+                                        <td>
+                                            <small>{{ choice }}</small>
+                                        </td>
+                                    {{ endfor }}
+                                </tr>
+                            {{ endfor }}
+                        </table>
+
                         <p class="lead mb-0 mt-5">Help</p>
                         <hr class="mt-0 mb-1">
                         <small class="text-muted">
