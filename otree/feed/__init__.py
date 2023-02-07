@@ -37,7 +37,7 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     treatment = models.StringField(doc='indicates the treatment a player is randomly assigned to')
     privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened", blank=True)
-    liked_item_attention = models.BooleanField(doc="indicates whether a participant passes the attention check", blank=True)
+    liked_item_attention = models.BooleanField(doc="indicates whether a participant passes the attention check", blank=True, initial=False)
 
     mc_1 = models.IntegerField(
         label="Estrava is internationally recognized as a leading global luxury fashion brand.",
@@ -203,8 +203,6 @@ class B_Instructions(Page):
 
 class C_Tweets(Page):
     form_model = "player"
-    form_fields = ['attention_check']
-
     @staticmethod
     def get_form_fields(player: Player):
         items = player.participant.tweets['doc'].values.tolist()
@@ -236,7 +234,8 @@ class C_Feed(Page):
         items = player.participant.tweets['doc_id'].values.tolist()
         items.insert(0, 0)
         return ['liked_item_' + str(n) for n in items] + \
-               ['reply_to_item_' + str(n) for n in items]
+               ['reply_to_item_' + str(n) for n in items] + \
+               ["liked_item_attention"]
 
     @staticmethod
     def vars_for_template(player: Player):

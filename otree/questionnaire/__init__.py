@@ -28,105 +28,80 @@ class Player(BasePlayer):
                                            initial=False,
                                            blank=True)
 
-# Brand Equity Bruner et al. 2012 p. 153
-    brand_equity_1 = models.IntegerField(
-        doc="What kind of attitude did you have about Estrava?",
-        label="What kind of attitude did you have about Estrava?",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False,
+    # manipulation checks
+    mc_3 = models.IntegerField(
+        label="How many tweets other than Estrava do you think were present in the feed?",
+        blank=True,
+        choices=[
+            [0, "0%"],
+            [1, "10%"],
+            [2, "20%"],
+            [3, "30%"],
+            [4, "40%"],
+            [5, "50%"],
+            [6, "60%"],
+            [7, "70%"],
+            [8, "80%"],
+            [9, "90%"],
+            [10, "100%"],
+        ]
     )
 
-    brand_equity_2 = models.IntegerField(
-        doc="What kind of image did Estrava have?",
-        label="What kind of image did Estrava have?",
+    mc_4 = models.IntegerField(
+        label="How many tweets other than Estrava did you notice in the feed?",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    brand_equity_3 = models.IntegerField(
-        doc="How would you rate the quality delivered by Estrava?",
-        label="How would you rate the quality delivered by Estrava?",
+    mc_5 = models.IntegerField(
+        label="There was a tweet that depicted fruits. What fruits were they?",
+        blank=True,
+        choices=[
+            [1, "Oranges"],
+            [2, "Apples"],
+            [3, "Lemons"],
+            [4, "Bananas"],
+        ]
+    )
+
+# Open Text Fields
+    otf_1 = models.LongStringField(
+        doc="What were the first thoughts and feelings that came to your mind when you were scrolling through the entire feed?",
+        lable="What were the first thoughts and feelings that came to your mind when you were scrolling through the entire feed?",
+        blank=False)
+
+    otf_2 = models.LongStringField(
+        doc="Please describe as detailed as you can your Twitter experience considering all tweets of the entire feed, given that you only wanted to find out Estrava’s recent updates. What did you like and dislike about your experience following the recent Estrava posts?",
+        lable="Please describe as detailed as you can your Twitter experience considering all tweets of the entire feed, given that you only wanted to find out Estrava’s recent updates. What did you like and dislike about your experience following the recent Estrava posts?",
+        blank=False)
+
+# Brand Contamination
+    brand_contamination_1_r = models.IntegerField(
+        label='Overall, scrolling through this feed reinforced my perception of Estrava as a luxury brand.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    brand_equity_4 = models.IntegerField(
-        doc="Would you have been willing to pay more for products from Estrava than for other companies’ products?",
-        label="Would you have been willing to pay more for products from Estrava than for other companies’ products?",
+    brand_contamination_2 = models.IntegerField(
+        label='The feed contained too many items related to topics that diminished the significance of Estrava.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-# Brand Clarity Bruner et al. 2012 p. 159
-    brand_clarity_1 = models.IntegerField(
-        doc="To what extent do you think the characteristics of Estrava are coherent?",
-        label="The characteristics of Estrava are coherent.",
+    brand_contamination_3_r = models.IntegerField(
+        label='Scrolling through this feed positively impacted my experience of Estrava.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    brand_clarity_2 = models.IntegerField(
-        doc="To what extent do you view Estrava as an integrated brand?",
-        label="Estrava is an integrated brand.",
+    brand_contamination_4 = models.IntegerField(
+        label='The feed lowered my perception of Estrava as there was an overabundance of tweets unrelated to it.',
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    brand_clarity_3 = models.IntegerField(
-        doc="To what extent does Estrava give you a concrete image about what this brand is like?",
-        label="Estrava gives me a concrete image about what the brand is like.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_4 = models.IntegerField(
-        doc="To what extent do you think it is easy to explain your impression of Estrava to other people?",
-        label="It is easy to explain my impression of Estrava to other people.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_5 = models.IntegerField(
-        doc="To what extent do you easily categorize what Estrava is?",
-        label="I easily categorize what Estrava is.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-
-# Risk 1 Bruner et al. 2012 p. 159
-    risk_1 = models.IntegerField(
-        doc="Getting a product from Estrava is risky.",
-        label="Getting a product from Estrava is risky.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_2 = models.IntegerField(
-        doc="A product from Estrava can lead to bad results.",
-        label="A product from Estrava can lead to bad results.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_3 = models.IntegerField(
-        doc="A product from Estrava has uncertain results.",
-        label="A product from Estrava has uncertain results.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_4 = models.IntegerField(
-        doc="Getting a product from Estrava makes me feel anxious.",
-        label="Getting a product from Estrava makes me feel anxious.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_5 = models.IntegerField(
-        doc="Getting a product from Estrava would cause me to worry.",
-        label="Getting a product from Estrava would cause me to worry.",
+    brand_contamination_5 = models.IntegerField(
+        label="Looking at the other's tweets lowered my perception of the luxury brand Estrava.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
@@ -183,33 +158,75 @@ class Player(BasePlayer):
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-# Persuasivness Bruner et al. 2019 p. 302
-# Estravas tweets were...
 
-    persuasive_1 = models.IntegerField(
-        doc="persuasive",
-        label="Persuasive",
+# Risk 1 Bruner et al. 2012 p. 159
+    risk_1 = models.IntegerField(
+        doc="Getting a product from Estrava is risky.",
+        label="Getting a product from Estrava is risky.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    persuasive_2 = models.IntegerField(
-        doc="effective",
-        label="Effective",
+    risk_2 = models.IntegerField(
+        doc="A product from Estrava can lead to bad results.",
+        label="A product from Estrava can lead to bad results.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    persuasive_3 = models.IntegerField(
-        doc="compelling",
-        label="Compelling",
+    risk_3 = models.IntegerField(
+        doc="A product from Estrava has uncertain results.",
+        label="A product from Estrava has uncertain results.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-    persuasive_4 = models.IntegerField(
-        doc="convincing",
-        label="Convincing",
+    risk_4 = models.IntegerField(
+        doc="Getting a product from Estrava makes me feel anxious.",
+        label="Getting a product from Estrava makes me feel anxious.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    risk_5 = models.IntegerField(
+        doc="Getting a product from Estrava would cause me to worry.",
+        label="Getting a product from Estrava would cause me to worry.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+# Brand Clarity Bruner et al. 2012 p. 159
+    brand_clarity_1 = models.IntegerField(
+        doc="To what extent do you think the characteristics of Estrava are coherent?",
+        label="The characteristics of Estrava are coherent.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    brand_clarity_2 = models.IntegerField(
+        doc="To what extent do you view Estrava as an integrated brand?",
+        label="Estrava is an integrated brand.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    brand_clarity_3 = models.IntegerField(
+        doc="To what extent does Estrava give you a concrete image about what this brand is like?",
+        label="Estrava gives me a concrete image about what the brand is like.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    brand_clarity_4 = models.IntegerField(
+        doc="To what extent do you think it is easy to explain your impression of Estrava to other people?",
+        label="It is easy to explain my impression of Estrava to other people.",
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    brand_clarity_5 = models.IntegerField(
+        doc="To what extent do you easily categorize what Estrava is?",
+        label="I easily categorize what Estrava is.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
@@ -270,110 +287,6 @@ class Player(BasePlayer):
 
     brand_innovativeness_6 = models.IntegerField(
         label='With regard to luxury fashion, Estrava generates new ideas.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Controls
-    control_fashion = models.IntegerField(
-        label='I have a strong interest in fashion, fashion trends and fashion advice.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    control_luxury = models.IntegerField(
-        label='I have a strong interest in luxury brands and luxury fashion.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    control_web3 = models.IntegerField(
-        label='I have a strong interest in blockchains, cryptocurrencies, NFTs or the metaverse.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Demographics
-    age = models.IntegerField(label="Please enter your age",
-                              min=18,
-                              max=99)
-
-    gender = models.IntegerField(
-        label="Please select your gender.",
-        choices=[
-            [1, "Female"],
-            [2, "Male"],
-            [3, "Diverse"],
-        ]
-    )
-
-    education = models.IntegerField(
-        label="What is the highest level of education you achieved?",
-        choices=[
-            [1, "Some high school"],
-            [2, "High school diploma or G.E.D."],
-            [3, "Some college"],
-            [4, "Associate's degree"],
-            [5, "Bachelor's degree"],
-            [6, "Master's degree"],
-            [7, "Other"],
-            [8, "Doctorate"],
-        ]
-    )
-
-    income = models.IntegerField(
-        label="What is your total household income per year?",
-        blank=True,
-        choices=[
-            [1, "Less than $10,000"],
-            [2, "$10,000 to $19,999"],
-            [3, "$20,000 to $34,999"],
-            [4, "$35,000 to $49,999"],
-            [5, "$50,000 to $74,999"],
-            [6, "$75,000 to $99,999"],
-            [7, "$100,000 to $149,999"],
-            [8, "$150,000 or more"],
-        ]
-    )
-
-# Open Text Fields
-    otf_1 = models.LongStringField(
-        doc="What were the first thoughts and feelings that came to your mind when you were scrolling through the entire feed?",
-        lable="What were the first thoughts and feelings that came to your mind when you were scrolling through the entire feed?",
-        blank=False)
-
-    otf_2 = models.LongStringField(
-        doc="Please describe as detailed as you can your Twitter experience considering all tweets of the entire feed, given that you only wanted to find out Estrava’s recent updates. What did you like and dislike about your experience following the recent Estrava posts?",
-        lable="Please describe as detailed as you can your Twitter experience considering all tweets of the entire feed, given that you only wanted to find out Estrava’s recent updates. What did you like and dislike about your experience following the recent Estrava posts?",
-        blank=False)
-
-# Brand Contamination
-    brand_contamination_1_r = models.IntegerField(
-        label='Overall, scrolling through this feed reinforced my perception of Estrava as a luxury brand.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_2 = models.IntegerField(
-        label='The feed contained too many items related to topics that diminished the significance of Estrava.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_3_r = models.IntegerField(
-        label='Scrolling through this feed positively impacted my experience of Estrava.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_4 = models.IntegerField(
-        label='The feed lowered my perception of Estrava as there was an overabundance of tweets unrelated to it.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_5 = models.IntegerField(
-        label="Looking at the other's tweets lowered my perception of the luxury brand Estrava.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
@@ -468,9 +381,133 @@ class Player(BasePlayer):
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
+# # Brand Equity Bruner et al. 2012 p. 153
+#     brand_equity_1 = models.IntegerField(
+#         doc="What kind of attitude did you have about Estrava?",
+#         label="What kind of attitude did you have about Estrava?",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False,
+#     )
+#
+#     brand_equity_2 = models.IntegerField(
+#         doc="What kind of image did Estrava have?",
+#         label="What kind of image did Estrava have?",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_equity_3 = models.IntegerField(
+#         doc="How would you rate the quality delivered by Estrava?",
+#         label="How would you rate the quality delivered by Estrava?",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_equity_4 = models.IntegerField(
+#         doc="Would you have been willing to pay more for products from Estrava than for other companies’ products?",
+#         label="Would you have been willing to pay more for products from Estrava than for other companies’ products?",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Persuasivness Bruner et al. 2019 p. 302
+# # Estravas tweets were...
+#
+#     persuasive_1 = models.IntegerField(
+#         doc="persuasive",
+#         label="Persuasive",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     persuasive_2 = models.IntegerField(
+#         doc="effective",
+#         label="Effective",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     persuasive_3 = models.IntegerField(
+#         doc="compelling",
+#         label="Compelling",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     persuasive_4 = models.IntegerField(
+#         doc="convincing",
+#         label="Convincing",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+
+# Controls
+    control_fashion = models.IntegerField(
+        label='I have a strong interest in fashion, fashion trends and fashion advice.',
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    control_luxury = models.IntegerField(
+        label='I have a strong interest in luxury brands and luxury fashion.',
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+    control_web3 = models.IntegerField(
+        label='I have a strong interest in blockchains, cryptocurrencies, NFTs or the metaverse.',
+        widget=widgets.RadioSelect,
+        choices=[1, 2, 3, 4, 5, 6, 7],
+        blank=False)
+
+# Demographics
+    age = models.IntegerField(label="Please enter your age",
+                              min=18,
+                              max=99)
+
+    gender = models.IntegerField(
+        label="Please select your gender.",
+        choices=[
+            [1, "Female"],
+            [2, "Male"],
+            [3, "Other"],
+            [4, "Prefer not to say"],
+        ]
+    )
+
+    education = models.IntegerField(
+        label="What is the highest level of education you achieved?",
+        choices=[
+            [1, "Some high school"],
+            [2, "High school diploma or G.E.D."],
+            [3, "Some college"],
+            [4, "Associate's degree"],
+            [5, "Bachelor's degree"],
+            [6, "Master's degree"],
+            [7, "Other"],
+            [8, "Doctorate"],
+        ]
+    )
+
+    income = models.IntegerField(
+        label="What is your total household income per year?",
+        blank=True,
+        choices=[
+            [1, "Less than $10,000"],
+            [2, "$10,000 to $19,999"],
+            [3, "$20,000 to $34,999"],
+            [4, "$35,000 to $49,999"],
+            [5, "$50,000 to $74,999"],
+            [6, "$75,000 to $99,999"],
+            [7, "$100,000 to $149,999"],
+            [8, "$150,000 or more"],
+        ]
+    )
+
 # Attention Checks
     ac_1 = models.IntegerField(
-        label="What is the name of the luxury brand?",
+        label="What was the name of the brand in the feed in this study?",
         blank=True,
         choices=[
             [1, "Evolene"],
@@ -481,7 +518,7 @@ class Player(BasePlayer):
     )
 
     ac_2 = models.IntegerField(
-        label="What is the home country of this brand?",
+        label="What is the home-country of this brand?",
         blank=True,
         choices=[
             [1, "Germany"],
@@ -491,41 +528,7 @@ class Player(BasePlayer):
         ]
     )
 
-# manipulation checks
-    mc_3 = models.IntegerField(
-        label="How many tweets other than Estrava do you think were present in the feed?",
-        blank=True,
-        choices=[
-            [0, "0%"],
-            [1, "10%"],
-            [2, "20%"],
-            [3, "30%"],
-            [4, "40%"],
-            [5, "50%"],
-            [6, "60%"],
-            [7, "70%"],
-            [8, "80%"],
-            [9, "90%"],
-            [10, "100%"],
-        ]
-    )
 
-    mc_4 = models.IntegerField(
-        label="How many tweets other than Estrava did you notice in the feed?",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    mc_5 = models.IntegerField(
-        label="There was a tweet that depicted fruits. What fruits were they?",
-        blank=True,
-        choices=[
-            [1, "Oranges"],
-            [2, "Apples"],
-            [3, "Lemons"],
-            [4, "Bananas"],
-        ]
-    )
 
 # completed the survey
     completed_survey = models.BooleanField(
@@ -541,7 +544,7 @@ class Player(BasePlayer):
 # PAGES
 class Manipulation_Check(Page):
     form_model = "player"
-    form_fields = ["mc_3", "mc_4", "mc_5"]
+    form_fields = ["mc_3", "mc_4"]
 
 
 class Open_Text_Fields(Page):
