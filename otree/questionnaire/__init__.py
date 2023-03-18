@@ -12,8 +12,6 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     QUESTIONNAIRE_TEMPLATE = "questionnaire/T_Questionnaire.html"
-    PAPERCUPS_TEMPLATE = __name__ + '/T_PAPERCUPS.html'
-
 
 class Subsession(BaseSubsession):
     pass
@@ -75,36 +73,36 @@ class Player(BasePlayer):
         lable="Please describe as detailed as you can your Twitter experience considering all tweets of the entire feed, given that you only wanted to find out Estrava’s recent updates. What did you like and dislike about your experience following the recent Estrava posts?",
         blank=False)
 
-# Brand Contamination
-    brand_contamination_1_r = models.IntegerField(
-        label='Overall, scrolling through this feed reinforced my perception of Estrava as a luxury brand.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_2 = models.IntegerField(
-        label='The feed contained too many items related to topics that diminished the significance of Estrava.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_3_r = models.IntegerField(
-        label='Scrolling through this feed positively impacted my experience of Estrava.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_4 = models.IntegerField(
-        label='The feed lowered my perception of Estrava as there was an overabundance of tweets unrelated to it.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_contamination_5 = models.IntegerField(
-        label="Looking at the other's tweets lowered my perception of the luxury brand Estrava.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
+# # Brand Contamination
+#     brand_contamination_1_r = models.IntegerField(
+#         label='Overall, scrolling through this feed reinforced my perception of Estrava as a luxury brand.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_contamination_2 = models.IntegerField(
+#         label='The feed contained too many items related to topics that diminished the significance of Estrava.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_contamination_3_r = models.IntegerField(
+#         label='Scrolling through this feed positively impacted my experience of Estrava.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_contamination_4 = models.IntegerField(
+#         label='The feed lowered my perception of Estrava as there was an overabundance of tweets unrelated to it.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_contamination_5 = models.IntegerField(
+#         label="Looking at the other's tweets lowered my perception of the luxury brand Estrava.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
 
 # Trustworthiness Bruner et al 2019 p. 471
 # Using the items below, please describe Estrava.
@@ -136,250 +134,250 @@ class Player(BasePlayer):
         choices=[1, 2, 3, 4, 5, 6, 7],
         blank=False)
 
-# Information pollution (close to Bruner et al. 2019 p.333)
-    pollution_1 = models.IntegerField(
-        doc="The feed contained too many items related to topics that are unrelated to fashion.",
-        label="The feed contained too many items related to topics that are unrelated to fashion.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    pollution_2_r = models.IntegerField(
-        doc="In the feed, the number of tweets related to fashion was too large.",
-        label="In the feed, the number of tweets related to fashion was too large.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    pollution_3 = models.IntegerField(
-        doc="In the feed, there was an overabundance of tweets unrelated to fashion.",
-        label="In the feed, there was an overabundance of tweets unrelated to fashion.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-
-# Risk 1 Bruner et al. 2012 p. 159
-    risk_1 = models.IntegerField(
-        doc="Getting a product from Estrava is risky.",
-        label="Getting a product from Estrava is risky.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_2 = models.IntegerField(
-        doc="A product from Estrava can lead to bad results.",
-        label="A product from Estrava can lead to bad results.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_3 = models.IntegerField(
-        doc="A product from Estrava has uncertain results.",
-        label="A product from Estrava has uncertain results.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_4 = models.IntegerField(
-        doc="Getting a product from Estrava makes me feel anxious.",
-        label="Getting a product from Estrava makes me feel anxious.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    risk_5 = models.IntegerField(
-        doc="Getting a product from Estrava would cause me to worry.",
-        label="Getting a product from Estrava would cause me to worry.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Brand Clarity Bruner et al. 2012 p. 159
-    brand_clarity_1 = models.IntegerField(
-        doc="To what extent do you think the characteristics of Estrava are coherent?",
-        label="The characteristics of Estrava are coherent.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_2 = models.IntegerField(
-        doc="To what extent do you view Estrava as an integrated brand?",
-        label="Estrava is an integrated brand.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_3 = models.IntegerField(
-        doc="To what extent does Estrava give you a concrete image about what this brand is like?",
-        label="Estrava gives me a concrete image about what the brand is like.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_4 = models.IntegerField(
-        doc="To what extent do you think it is easy to explain your impression of Estrava to other people?",
-        label="It is easy to explain my impression of Estrava to other people.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_clarity_5 = models.IntegerField(
-        doc="To what extent do you easily categorize what Estrava is?",
-        label="I easily categorize what Estrava is.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Prestige (Ko, Castello & Taylor 2019)
-    prestige_1 = models.IntegerField(
-        doc="Estrava is a symbol of prestige.",
-        label="Estrava is a symbol of prestige.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    prestige_2 = models.IntegerField(
-        doc="Estrava is a premium brand.",
-        label="Estrava is a premium brand.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    prestige_3 = models.IntegerField(
-        doc="Estrava is a high-end brand.",
-        label="Estrava is a high-end brand.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-
-# Brand innovativeness (Shams et al. 2015)
-    brand_innovativeness_1 = models.IntegerField(
-        label='Estrava sets itself apart from the rest when it comes to luxury fashion.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_innovativeness_2 = models.IntegerField(
-        label='With regard to luxury fashion, Estrava is dynamic.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_innovativeness_3 = models.IntegerField(
-        label='Estrava luxury fashion makes me feel “wow!”.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_innovativeness_4 = models.IntegerField(
-        label='Estrava is an innovative brand when it comes to luxury fashion.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_innovativeness_5 = models.IntegerField(
-        label='Estrava makes new luxury fashion with superior design.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    brand_innovativeness_6 = models.IntegerField(
-        label='With regard to luxury fashion, Estrava generates new ideas.',
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Functional Value (Hennigs et al., 2012)
-    functional_value_1 = models.IntegerField(
-        label="I feel like Estrava offers a superior product quality.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    functional_value_2_r = models.IntegerField(
-        label="I feel like Estrava does not meet my quality standards and will thus, never enter into my purchase consideration.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    functional_value_3 = models.IntegerField(
-        label="I feel like Estrava puts emphasis on quality assurance over prestige.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-
-
-# Financial Value (Hennigs et al., 2012)
-    financial_value_1 = models.IntegerField(
-        label="Estrava luxury products are inevitably very expensive.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    financial_value_2 = models.IntegerField(
-        label="Few people own an Estrava luxury product.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    financial_value_3 = models.IntegerField(
-        label="Truly Estrava luxury products cannot be mass-produced.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    financial_value_4 = models.IntegerField(
-        label="An Estrava luxury product cannot be sold in supermarkets.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Individual Value (Hennigs et al., 2012)
-    individual_value_1 = models.IntegerField(
-        label="Browsing the feed, I felt like I would derive self-satisfaction from buying Estrava products.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    individual_value_2 = models.IntegerField(
-        label="Browsing the feed, I felt like purchasing Estrava clothing would make me feel good.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    individual_value_3 = models.IntegerField(
-        label="Browsing the feed, I felt like wearing Estrava clothing would give me a lot of pleasure.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    individual_value_4 = models.IntegerField(
-        label="Browsing the feed, I felt like Estrava products would be the perfect gift that I would buy to treat myself.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-# Social Value (Hennigs et al., 2012)
-    social_value_1 = models.IntegerField(
-        label="I feel like strangers would have a high opinion of me wearing Estrava.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    social_value_2 = models.IntegerField(
-        label="From now on, I pay attention to what types of people buy Estrava products.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
-
-    social_value_3 = models.IntegerField(
-        label="If I were to buy an Estrava product, I would worry about what others would think of me.",
-        widget=widgets.RadioSelect,
-        choices=[1, 2, 3, 4, 5, 6, 7],
-        blank=False)
+# # Information pollution (close to Bruner et al. 2019 p.333)
+#     pollution_1 = models.IntegerField(
+#         doc="The feed contained too many items related to topics that are unrelated to fashion.",
+#         label="The feed contained too many items related to topics that are unrelated to fashion.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     pollution_2_r = models.IntegerField(
+#         doc="In the feed, the number of tweets related to fashion was too large.",
+#         label="In the feed, the number of tweets related to fashion was too large.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     pollution_3 = models.IntegerField(
+#         doc="In the feed, there was an overabundance of tweets unrelated to fashion.",
+#         label="In the feed, there was an overabundance of tweets unrelated to fashion.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#
+# # Risk 1 Bruner et al. 2012 p. 159
+#     risk_1 = models.IntegerField(
+#         doc="Getting a product from Estrava is risky.",
+#         label="Getting a product from Estrava is risky.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     risk_2 = models.IntegerField(
+#         doc="A product from Estrava can lead to bad results.",
+#         label="A product from Estrava can lead to bad results.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     risk_3 = models.IntegerField(
+#         doc="A product from Estrava has uncertain results.",
+#         label="A product from Estrava has uncertain results.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     risk_4 = models.IntegerField(
+#         doc="Getting a product from Estrava makes me feel anxious.",
+#         label="Getting a product from Estrava makes me feel anxious.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     risk_5 = models.IntegerField(
+#         doc="Getting a product from Estrava would cause me to worry.",
+#         label="Getting a product from Estrava would cause me to worry.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Brand Clarity Bruner et al. 2012 p. 159
+#     brand_clarity_1 = models.IntegerField(
+#         doc="To what extent do you think the characteristics of Estrava are coherent?",
+#         label="The characteristics of Estrava are coherent.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_clarity_2 = models.IntegerField(
+#         doc="To what extent do you view Estrava as an integrated brand?",
+#         label="Estrava is an integrated brand.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_clarity_3 = models.IntegerField(
+#         doc="To what extent does Estrava give you a concrete image about what this brand is like?",
+#         label="Estrava gives me a concrete image about what the brand is like.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_clarity_4 = models.IntegerField(
+#         doc="To what extent do you think it is easy to explain your impression of Estrava to other people?",
+#         label="It is easy to explain my impression of Estrava to other people.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_clarity_5 = models.IntegerField(
+#         doc="To what extent do you easily categorize what Estrava is?",
+#         label="I easily categorize what Estrava is.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Prestige (Ko, Castello & Taylor 2019)
+#     prestige_1 = models.IntegerField(
+#         doc="Estrava is a symbol of prestige.",
+#         label="Estrava is a symbol of prestige.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     prestige_2 = models.IntegerField(
+#         doc="Estrava is a premium brand.",
+#         label="Estrava is a premium brand.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     prestige_3 = models.IntegerField(
+#         doc="Estrava is a high-end brand.",
+#         label="Estrava is a high-end brand.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#
+# # Brand innovativeness (Shams et al. 2015)
+#     brand_innovativeness_1 = models.IntegerField(
+#         label='Estrava sets itself apart from the rest when it comes to luxury fashion.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_innovativeness_2 = models.IntegerField(
+#         label='With regard to luxury fashion, Estrava is dynamic.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_innovativeness_3 = models.IntegerField(
+#         label='Estrava luxury fashion makes me feel “wow!”.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_innovativeness_4 = models.IntegerField(
+#         label='Estrava is an innovative brand when it comes to luxury fashion.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_innovativeness_5 = models.IntegerField(
+#         label='Estrava makes new luxury fashion with superior design.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     brand_innovativeness_6 = models.IntegerField(
+#         label='With regard to luxury fashion, Estrava generates new ideas.',
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Functional Value (Hennigs et al., 2012)
+#     functional_value_1 = models.IntegerField(
+#         label="I feel like Estrava offers a superior product quality.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     functional_value_2_r = models.IntegerField(
+#         label="I feel like Estrava does not meet my quality standards and will thus, never enter into my purchase consideration.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     functional_value_3 = models.IntegerField(
+#         label="I feel like Estrava puts emphasis on quality assurance over prestige.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#
+#
+# # Financial Value (Hennigs et al., 2012)
+#     financial_value_1 = models.IntegerField(
+#         label="Estrava luxury products are inevitably very expensive.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     financial_value_2 = models.IntegerField(
+#         label="Few people own an Estrava luxury product.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     financial_value_3 = models.IntegerField(
+#         label="Truly Estrava luxury products cannot be mass-produced.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     financial_value_4 = models.IntegerField(
+#         label="An Estrava luxury product cannot be sold in supermarkets.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Individual Value (Hennigs et al., 2012)
+#     individual_value_1 = models.IntegerField(
+#         label="Browsing the feed, I felt like I would derive self-satisfaction from buying Estrava products.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     individual_value_2 = models.IntegerField(
+#         label="Browsing the feed, I felt like purchasing Estrava clothing would make me feel good.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     individual_value_3 = models.IntegerField(
+#         label="Browsing the feed, I felt like wearing Estrava clothing would give me a lot of pleasure.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     individual_value_4 = models.IntegerField(
+#         label="Browsing the feed, I felt like Estrava products would be the perfect gift that I would buy to treat myself.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+# # Social Value (Hennigs et al., 2012)
+#     social_value_1 = models.IntegerField(
+#         label="I feel like strangers would have a high opinion of me wearing Estrava.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     social_value_2 = models.IntegerField(
+#         label="From now on, I pay attention to what types of people buy Estrava products.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
+#
+#     social_value_3 = models.IntegerField(
+#         label="If I were to buy an Estrava product, I would worry about what others would think of me.",
+#         widget=widgets.RadioSelect,
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         blank=False)
 
 # # Brand Equity Bruner et al. 2012 p. 153
 #     brand_equity_1 = models.IntegerField(
@@ -552,41 +550,41 @@ class Open_Text_Fields(Page):
     form_fields = ["otf_1", "otf_2"]
 
 
-class Brand_Contamination(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["brand_contamination_1_r", "brand_contamination_2", "brand_contamination_3_r",
-                       "brand_contamination_4", "brand_contamination_5"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Pollution(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["pollution_1", "pollution_2_r", "pollution_3"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Risk(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["risk_1", "risk_2", "risk_3", "risk_4", "risk_5"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Brand_Clarity(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["brand_clarity_1", "brand_clarity_2", "brand_clarity_3", "brand_clarity_4", "brand_clarity_5"]
-        random.shuffle(form_fields)
-        return form_fields
+# class Brand_Contamination(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["brand_contamination_1_r", "brand_contamination_2", "brand_contamination_3_r",
+#                        "brand_contamination_4", "brand_contamination_5"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Pollution(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["pollution_1", "pollution_2_r", "pollution_3"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Risk(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["risk_1", "risk_2", "risk_3", "risk_4", "risk_5"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Brand_Clarity(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["brand_clarity_1", "brand_clarity_2", "brand_clarity_3", "brand_clarity_4", "brand_clarity_5"]
+#         random.shuffle(form_fields)
+#         return form_fields
 
 
 class Trust(Page):
@@ -594,60 +592,60 @@ class Trust(Page):
     form_fields = ["trust_1", "trust_2", "trust_3", "trust_4"]
 
 
-class Prestige(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["prestige_1", "prestige_2", "prestige_3"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Brand_Innovativeness(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["brand_innovativeness_1", "brand_innovativeness_2", "brand_innovativeness_3",
-                       "brand_innovativeness_4", "brand_innovativeness_5", "brand_innovativeness_6"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Functional_Value(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["functional_value_1", "functional_value_2_r", "functional_value_3"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Financial_Value(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["financial_value_1", "financial_value_2", "financial_value_3", "financial_value_4"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Individual_Value(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["individual_value_1", "individual_value_2", "individual_value_3",
-                       "individual_value_4"]
-        random.shuffle(form_fields)
-        return form_fields
-
-
-class Social_Value(Page):
-    form_model = "player"
-    @staticmethod
-    def get_form_fields(player: Player):
-        form_fields = ["social_value_1", "social_value_2", "social_value_3"]
-        random.shuffle(form_fields)
-        return form_fields
+# class Prestige(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["prestige_1", "prestige_2", "prestige_3"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Brand_Innovativeness(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["brand_innovativeness_1", "brand_innovativeness_2", "brand_innovativeness_3",
+#                        "brand_innovativeness_4", "brand_innovativeness_5", "brand_innovativeness_6"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Functional_Value(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["functional_value_1", "functional_value_2_r", "functional_value_3"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Financial_Value(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["financial_value_1", "financial_value_2", "financial_value_3", "financial_value_4"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Individual_Value(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["individual_value_1", "individual_value_2", "individual_value_3",
+#                        "individual_value_4"]
+#         random.shuffle(form_fields)
+#         return form_fields
+#
+#
+# class Social_Value(Page):
+#     form_model = "player"
+#     @staticmethod
+#     def get_form_fields(player: Player):
+#         form_fields = ["social_value_1", "social_value_2", "social_value_3"]
+#         random.shuffle(form_fields)
+#         return form_fields
 
 
 class Controls(Page):
@@ -677,8 +675,11 @@ class Debriefing(Page):
 
 
 page_sequence = [Manipulation_Check,
-                 Open_Text_Fields, Brand_Contamination, Trust, Pollution, Risk, Brand_Clarity, Prestige,
-                 Brand_Innovativeness, Functional_Value, Financial_Value, Individual_Value, Social_Value,
+                 Open_Text_Fields,
+                 # Brand_Contamination,
+                 Trust,
+                 # Pollution, Risk, Brand_Clarity, Prestige,
+                 # Brand_Innovativeness, Functional_Value, Financial_Value, Individual_Value, Social_Value,
                  Controls, Attention_Check, Demographics, Debriefing]
 
 
